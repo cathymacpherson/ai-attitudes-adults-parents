@@ -11,14 +11,14 @@ tidy result CSVs and Overleaf-ready LaTeX table fragments.
 ## Run
 
 ```bash
-Rscript run_paper1.R
+Rscript run_analysis.R
 ```
 
 The power analysis (`09_power.R`) takes several minutes. To skip it while
 iterating on the models:
 
 ```bash
-RUN_POWER=0 Rscript run_paper1.R
+RUN_POWER=0 Rscript run_analysis.R
 ```
 
 ### Running one step at a time
@@ -31,7 +31,7 @@ repository:
 source("R/04_model_a.R")
 ```
 
-Steps that model the data call `paper1_require_data()`, which sources
+Steps that model the data call `require_data()`, which sources
 `01_load_prepare.R` only if the analysis frames are not already in the
 session.
 
@@ -76,7 +76,7 @@ install.packages(c("lme4", "lmerTest", "emmeans", "simr", "ggplot2", "clubSandwi
 
 ## Outputs
 
-Written to `outputs/paper1_r/`: tidy CSVs at the top level, LaTeX table
+Written to `outputs/results/`: tidy CSVs at the top level, LaTeX table
 fragments in `tables/`, figures in `figures/`, and `preview_all_tables.tex`
 for a one-shot compile check of every table.
 
@@ -86,6 +86,6 @@ for a one-shot compile check of every table.
 python3 render_tables.py
 ```
 
-Renders `outputs/paper1_r/tables/*.tex` as a single HTML page
-(`outputs/paper1_r/tables_preview.html`) for viewing without a LaTeX
+Renders `outputs/results/tables/*.tex` as a single HTML page
+(`outputs/results/tables_preview.html`) for viewing without a LaTeX
 toolchain.

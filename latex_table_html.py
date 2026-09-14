@@ -1,11 +1,8 @@
-"""Shared engine for rendering our LaTeX table fragments as a single HTML page.
+"""Engine for rendering the LaTeX table fragments as a single HTML page.
 
-Generic across papers: the LaTeX conventions parsed here (booktabs rules,
-threeparttable notes, multicolumn/cmidrule spanner headers, the math/macro
-vocabulary write_apa_table() in r/R/utils.R actually emits) are the same
-regardless of which paper's tables/*.tex directory is being rendered. Each
-paper gets its own thin script (render_paper1_tables_html.py,
-render_paper2_tables_html.py, ...) that supplies TABLES_DIR, TABLE_ORDER,
+Parses the LaTeX conventions write_apa_table() (R/utils.R) emits: booktabs
+rules, threeparttable notes, multicolumn/cmidrule spanner headers, and its
+math/macro vocabulary. render_tables.py supplies TABLES_DIR, TABLE_ORDER,
 OUTPUT_HTML and a title, then calls render_tables().
 """
 

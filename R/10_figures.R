@@ -12,7 +12,7 @@
 # marks significance as in A and C.
 
 # Runnable on its own: sets up the session if it is not already set up.
-if (!exists("PAPER1_SETUP")) {
+if (!exists("SETUP_DONE")) {
   .p <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
   while (!file.exists(file.path(.p, "R", "_setup.R"))) {
     if (identical(dirname(.p), .p)) stop("Run from inside the repository.")
@@ -20,18 +20,18 @@ if (!exists("PAPER1_SETUP")) {
   }
   source(file.path(.p, "R", "_setup.R"))
 }
-paper1_require_data()
+require_data()
 
 # Each model's results are needed, not just the scored data. Sourced only if
-# this is a fresh session, exactly like paper1_require_data() above.
+# this is a fresh session, exactly like require_data() above.
 if (!exists("model_a_effects", envir = globalenv())) {
-  source(file.path(PAPER1_R_DIR, "04_model_a.R"), local = globalenv())
+  source(file.path(R_DIR, "04_model_a.R"), local = globalenv())
 }
 if (!exists("model_b_tool_effect", envir = globalenv())) {
-  source(file.path(PAPER1_R_DIR, "05_model_b.R"), local = globalenv())
+  source(file.path(R_DIR, "05_model_b.R"), local = globalenv())
 }
 if (!exists("model_c_coefficients", envir = globalenv())) {
-  source(file.path(PAPER1_R_DIR, "06_model_c.R"), local = globalenv())
+  source(file.path(R_DIR, "06_model_c.R"), local = globalenv())
 }
 
 suppressPackageStartupMessages(library(ggplot2))
@@ -60,7 +60,7 @@ COLOUR_OUTCOME_2 <- "#EB6834"
 # aliases and errors with "invalid font type" on anything else. "Times" maps
 # to Times-Roman, the same typeface family, and renders correctly in both the
 # PDF and PNG output.
-paper1_fig_theme <- ggplot2::theme_minimal(base_size = 12, base_family = "Times") +
+fig_theme <- ggplot2::theme_minimal(base_size = 12, base_family = "Times") +
   ggplot2::theme(
     legend.position = "bottom",
     panel.grid = ggplot2::element_blank(),
@@ -74,7 +74,7 @@ paper1_fig_theme <- ggplot2::theme_minimal(base_size = 12, base_family = "Times"
 # Saves both a vector copy (Overleaf/print) and a PNG (viewing without a PDF
 # reader), and registers both with the stale-output tracker so a figure that
 # stops being generated is removed rather than left behind.
-save_paper1_figure <- function(plot, name, width, height) {
+save_figure <- function(plot, name, width, height) {
   for (ext in c("pdf", "png")) {
     path <- file.path(FIG_DIR, paste0(name, ".", ext))
     ggplot2::ggsave(path, plot, width = width, height = height, units = "in", dpi = 300)
@@ -125,9 +125,9 @@ fig_a <- ggplot2::ggplot(
     x = expression(paste("Coefficient (", italic(b), "): bespoke AI - general-purpose AI")),
     y = NULL, colour = NULL, shape = NULL
   ) +
-  paper1_fig_theme
+  fig_theme
 
-save_paper1_figure(fig_a, "model_a_tool_effect", width = 7, height = 4)
+save_figure(fig_a, "model_a_tool_effect", width = 7, height = 4)
 
 outcome_labels_b <- vapply(ANALYSIS_SCALES[MODEL_B_OUTCOMES], function(s) s$label, character(1))
 
@@ -188,9 +188,9 @@ fig_b <- ggplot2::ggplot(
   ggplot2::labs(
     x = expression(paste("Coefficient (", italic(b), ")")), y = NULL, colour = NULL, shape = NULL
   ) +
-  paper1_fig_theme
+  fig_theme
 
-save_paper1_figure(fig_b, "model_b_predictors", width = 9, height = 5)
+save_figure(fig_b, "model_b_predictors", width = 9, height = 5)
 
 # ---- Figure C: Model C's demographic/familiarity predictors -----------------
 # "Who holds positive attitudes and intentions" is the main-effects (C1)
@@ -236,9 +236,9 @@ fig_c <- ggplot2::ggplot(
   ggplot2::labs(
     x = expression(paste("Coefficient (", italic(b), ")")), y = NULL, colour = NULL, shape = NULL
   ) +
-  paper1_fig_theme
+  fig_theme
 
-save_paper1_figure(fig_c, "model_c_predictors", width = 9, height = 5)
+save_figure(fig_c, "model_c_predictors", width = 9, height = 5)
 
 message("  wrote 3 figures (pdf + png) to ", sub(
   paste0("^", normalizePath(ROOT, winslash = "/"), "/"), "",

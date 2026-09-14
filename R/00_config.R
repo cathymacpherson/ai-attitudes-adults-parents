@@ -21,7 +21,7 @@ find_project_root <- function(start = getwd()) {
 
 ROOT <- find_project_root()
 DATA_FILE <- file.path(ROOT, "data", "cleaned_scored_data.csv")
-OUT_DIR <- file.path(ROOT, "outputs", "paper1_r")
+OUT_DIR <- file.path(ROOT, "outputs", "results")
 TEX_DIR <- file.path(OUT_DIR, "tables")
 FIG_DIR <- file.path(OUT_DIR, "figures")
 

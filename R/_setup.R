@@ -1,6 +1,6 @@
 # Shared session setup, so that any step script can be run on its own.
 #
-# run_paper1.R sources this once. Each step script also sources it if the
+# run_analysis.R sources this once. Each step script also sources it if the
 # session has not been set up yet, which is what makes
 #
 #   source("R/04_model_a.R")
@@ -16,7 +16,7 @@ suppressPackageStartupMessages({
 
 # Directory this file lives in, resolved by walking up from the working
 # directory. Works from the repository root or from R/.
-PAPER1_R_DIR <- local({
+R_DIR <- local({
   path <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
   repeat {
     candidate <- file.path(path, "R", "_setup.R")
@@ -30,8 +30,8 @@ PAPER1_R_DIR <- local({
   }
 })
 
-source(file.path(PAPER1_R_DIR, "00_config.R"))
-source(file.path(PAPER1_R_DIR, "utils.R"))
+source(file.path(R_DIR, "00_config.R"))
+source(file.path(R_DIR, "utils.R"))
 
 dir.create(OUT_DIR, recursive = TRUE, showWarnings = FALSE)
 dir.create(TEX_DIR, recursive = TRUE, showWarnings = FALSE)
@@ -40,11 +40,11 @@ dir.create(FIG_DIR, recursive = TRUE, showWarnings = FALSE)
 # Loads the analysis frames if they are not already in the session. Steps that
 # model the data call this; the power analysis, which is entirely synthetic,
 # does not.
-paper1_require_data <- function() {
+require_data <- function() {
   if (!exists("long", envir = globalenv())) {
-    source(file.path(PAPER1_R_DIR, "01_load_prepare.R"), local = globalenv())
+    source(file.path(R_DIR, "01_load_prepare.R"), local = globalenv())
   }
   invisible(TRUE)
 }
 
-PAPER1_SETUP <- TRUE
+SETUP_DONE <- TRUE

@@ -2,10 +2,10 @@
 # generative AI for mental health, among community adults and parents/carers.
 #
 # Reads a scored dataset from data/cleaned_scored_data.csv and writes tidy
-# result CSVs plus Overleaf-ready LaTeX table fragments to outputs/paper1_r/.
+# result CSVs plus Overleaf-ready LaTeX table fragments to outputs/results/.
 #
 # Run the whole pipeline from the repository root:
-#   Rscript run_paper1.R
+#   Rscript run_analysis.R
 #
 # Individual steps can also be run on their own, from any directory inside the
 # repository, because each one sets up the session if it has not been set up

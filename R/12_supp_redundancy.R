@@ -17,7 +17,7 @@
 # model_formula() and analysis_rows().
 
 # Runnable on its own: sets up the session if it is not already set up.
-if (!exists("PAPER1_SETUP")) {
+if (!exists("SETUP_DONE")) {
   .p <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
   while (!file.exists(file.path(.p, "R", "_setup.R"))) {
     if (identical(dirname(.p), .p)) stop("Run from inside the repository.")
@@ -25,10 +25,10 @@ if (!exists("PAPER1_SETUP")) {
   }
   source(file.path(.p, "R", "_setup.R"))
 }
-paper1_require_data()
+require_data()
 
 if (!exists("model_b_coefficients", envir = globalenv())) {
-  source(file.path(PAPER1_R_DIR, "05_model_b.R"), local = globalenv())
+  source(file.path(R_DIR, "05_model_b.R"), local = globalenv())
 }
 
 message("12_supp_redundancy")

@@ -6,7 +6,7 @@
 #                   eight subscale scores plus within/between decompositions
 
 # Runnable on its own: sets up the session if it is not already set up.
-if (!exists("PAPER1_SETUP")) {
+if (!exists("SETUP_DONE")) {
   .p <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
   while (!file.exists(file.path(.p, "R", "_setup.R"))) {
     if (identical(dirname(.p), .p)) stop("Run from inside the repository.")
