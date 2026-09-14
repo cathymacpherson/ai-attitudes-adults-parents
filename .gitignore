@@ -1,0 +1,10 @@
+# Participant data and generated results are not tracked.
+data/
+outputs/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+
+# OS
+.DS_Store
