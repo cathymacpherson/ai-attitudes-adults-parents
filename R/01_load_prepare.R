@@ -319,23 +319,7 @@ sample_flow <- rbind(
   )
 )
 
+# Numbers are still computed and saved (00_sample_flow.csv) for reference;
+# no sample_flow.tex table is written.
 write_result_csv(sample_flow, "00_sample_flow")
 write_result_csv(long, "01_analysis_long")
-
-write_apa_table(
-  data.frame(
-    Step = sample_flow$step,
-    Total = sample_flow$n_total,
-    Adults = sample_flow$n_adult,
-    Parents = sample_flow$n_parent
-  ),
-  file = file.path(TEX_DIR, "sample_flow.tex"),
-  caption = "Sample selection for the present analyses",
-  label = "tab:sample-flow",
-  align = "lrrr",
-  escape = TRUE,
-  note = paste0(
-    "Adults are self-report respondents; parents are parent/carer respondents ",
-    "reporting on behalf of one child."
-  )
-)

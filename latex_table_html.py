@@ -223,17 +223,22 @@ def render_tables(tables_dir, table_order, output_html, title, generated_note):
 
     table_order fixes the presentation order; any .tex file present but not
     listed is appended at the end (and flagged), so a new table can't
-    silently go missing. Returns the number of tables rendered.
+    silently go missing. A table_order entry with no file on disk is skipped
+    with a warning rather than failing outright -- the pipeline's own
+    RUN_POWER=0 mode intentionally leaves the power tables ungenerated, and a
+    preview of everything else is still useful without them. Returns the
+    number of tables rendered.
     """
     available = {p.name for p in tables_dir.glob("*.tex")}
     missing = [f for f in table_order if f not in available]
     if missing:
-        raise SystemExit(f"table_order references files not in {tables_dir}: {missing}")
+        print(f"Warning: table(s) in table_order not found, skipped: {missing}")
+    present_order = [f for f in table_order if f in available]
 
     extra = sorted(available - set(table_order))
     if extra:
         print(f"Warning: table(s) not in table_order, appended at the end: {extra}")
-    filenames = table_order + extra
+    filenames = present_order + extra
 
     parsed_tables = [(f, parse_table(tables_dir / f)) for f in filenames]
     labels = {parsed["label"]: parsed["caption"] for _, parsed in parsed_tables}
