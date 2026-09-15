@@ -349,13 +349,12 @@ for (outcome in MODEL_B_OUTCOMES) {
     ),
     # The decomposition itself is explained in the Data Analysis section. What
     # remains here is the unit, why some rows have no within-person entry, and
-    # where the tool-type coefficient went, since its absence from this table
-    # would otherwise look like an omission.
+    # that the tool-type coefficient is reported elsewhere, since its absence
+    # from this table would otherwise look like an omission.
     note = paste0(
       "$b$ is in scale points (1--7). Demographic covariates and respondent ",
       "group vary between participants only, so have no within-person ",
-      "component. The tool-type coefficient is reported in ",
-      "Table \\ref{tab:model-b-tool}."
+      "component. The tool-type coefficient is reported separately."
     )
   )
 }

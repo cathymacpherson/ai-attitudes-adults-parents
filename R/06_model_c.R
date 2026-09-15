@@ -179,8 +179,7 @@ write_apa_table(
     "$b$ is in scale points (1--7). $p$ values are Benjamini-Hochberg adjusted ",
     "within each outcome, across that outcome's eight predictors. $R^2_m$ is ",
     "the marginal (fixed-effects) $R^2$. The perception subscales are excluded ",
-    "here and enter as predictors in Tables \\ref{tab:model-b-coef-att} and ",
-    "\\ref{tab:model-b-coef-intent}."
+    "here and enter as predictors elsewhere."
   )
 )
 
