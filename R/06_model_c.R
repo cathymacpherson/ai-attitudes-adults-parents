@@ -115,7 +115,6 @@ C_TERM_LABELS <- c(
   "respondent_typeParent" = "Parent/carer (vs adult)",
   "age_c" = "Age (centred)",
   "gender_adjFemale" = "Female (vs male)",
-  "gender_adjOther or undisclosed" = "Other or undisclosed gender (vs male)",
   "education_c" = "Education (centred)",
   "genai_freq_c" = "GenAI use frequency (centred)",
   "tech_conf_c" = "Digital technology confidence (centred)",
