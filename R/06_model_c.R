@@ -172,13 +172,11 @@ write_apa_table(
   size = "\\small",
   header = c("Predictor", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
   # Model specification is in the Data Analysis section. Retained here: the
-  # unit, the symbol definition, and why the perception subscales are absent --
-  # without which their omission reads as an oversight.
+  # unit and the symbol definition.
   note = paste0(
     "$b$ is in scale points (1--7). $p$ values are Benjamini-Hochberg adjusted ",
     "within each outcome, across that outcome's eight predictors. $R^2_m$ is ",
-    "the marginal (fixed-effects) $R^2$. The perception subscales are excluded ",
-    "here and enter as predictors elsewhere."
+    "the marginal (fixed-effects) $R^2$."
   )
 )
 

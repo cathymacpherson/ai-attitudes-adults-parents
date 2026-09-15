@@ -138,9 +138,9 @@ for (outcome in MODEL_B_OUTCOMES) {
     ),
     note = paste0(
       "Each construct is entered with tool type, respondent group, and ",
-      "demographics, plus only the named absorber (not the full Block 3 ",
-      "model); all columns share the same rows. Losing significance once an ",
-      "absorber is added indicates shared variance with it, not a genuine null."
+      "demographics, plus only the named absorber; all columns share the ",
+      "same rows. Losing significance once an absorber is added indicates ",
+      "shared variance with it, not a genuine null."
     )
   )
 }

@@ -252,12 +252,7 @@ write_apa_table(
     "\\cmidrule(lr){2-3} \\cmidrule(lr){4-5}",
     " & General & Bespoke & General & Bespoke"
   ),
-  note = paste0(
-    "Cells are $M$ ($SD$); all subscales are scored 1--7. Privacy concern, human ",
-    "oversight preferences and environmental concerns are scored in their natural ",
-    "direction, so higher values indicate greater concern or a stronger preference ",
-    "for human oversight."
-  )
+  note = "Cells are $M$ ($SD$); all subscales are scored 1--7."
 )
 
 # ---- Comparison against the scale midpoint ----------------------------------

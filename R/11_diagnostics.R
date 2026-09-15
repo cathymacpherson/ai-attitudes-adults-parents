@@ -275,10 +275,7 @@ write_apa_table(
              "Shapiro $p$", "Heterosc. $p$"),
   note = paste0(
     "DV skew is on the raw 1--7 composite; residual skew/kurtosis (excess) are ",
-    "from the fitted model. Shapiro-Wilk on residuals is near-guaranteed to be ",
-    "significant at this $n$ even for minor deviations, so it is reported for ",
-    "completeness rather than as a pass/fail criterion; magnitude and the ",
-    "heteroscedasticity test are more informative here."
+    "from the fitted model."
   )
 )
 
