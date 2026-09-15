@@ -27,14 +27,7 @@ FIG_DIR <- file.path(OUT_DIR, "figures")
 
 # ---- Sample definition ------------------------------------------------------
 
-# Community adults and parents/carers. Set to TRUE to include SONA
-# (psychology-undergraduate) respondents as a sensitivity check.
-INCLUDE_SONA <- FALSE
-
-# Two parent/carer respondents were recruited via SONA and are dropped with
-# the rest of SONA, so the adult and parent samples are matched on
-# recruitment channel.
-DROP_SONA_FROM_PARENTS <- TRUE
+# Community adults and parents/carers.
 
 # Two parent/carer respondents reported an implausible age (below 18),
 # apparently their child's age entered by mistake. They are retained and only

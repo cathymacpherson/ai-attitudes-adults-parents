@@ -23,7 +23,6 @@ raw <- utils::read.csv(DATA_FILE, stringsAsFactors = FALSE, check.names = FALSE)
 participants <- data.frame(
   participant_id = as.character(raw$ResponseId),
   participant_type = tolower(trimws(as.character(raw$participant_type))),
-  source = tolower(trimws(as.character(raw$source))),
   stringsAsFactors = FALSE
 )
 
@@ -149,12 +148,6 @@ add_step <- function(label, keep) {
 }
 
 keep <- add_step("Cleaned and scored dataset", !is.na(participants$respondent_type))
-
-if (!INCLUDE_SONA) {
-  is_sona <- participants$source == "sona"
-  drop <- is_sona & (participants$respondent_type == "Adult" | DROP_SONA_FROM_PARENTS)
-  keep <- add_step("Excluded SONA respondents", keep & !drop)
-}
 
 # Children outside the recruited age range make the respondent ineligible, so
 # the parent/carer is excluded outright. Respondents whose child's age is
@@ -343,6 +336,6 @@ write_apa_table(
   escape = TRUE,
   note = paste0(
     "Adults are self-report respondents; parents are parent/carer respondents ",
-    "reporting on behalf of one child. SONA respondents are reported separately."
+    "reporting on behalf of one child."
   )
 )

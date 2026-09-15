@@ -35,8 +35,7 @@ source(file.path(script_dir, "R", "_setup.R"))
 message("Analysis pipeline")
 message("  root:    ", ROOT)
 message("  outputs: ", OUT_DIR)
-message("  sample:  ", if (INCLUDE_SONA) "ALL respondents (SONA included)"
-        else "community adults and parents/carers (SONA excluded)")
+message("  sample:  community adults and parents/carers")
 message("  concern scales: ",
         if (REVERSE_CONCERN_SCALES) "reverse-scored (pipeline convention)"
         else "natural direction (higher = more concern)")
@@ -81,8 +80,6 @@ manifest <- list(
   r_version = paste(R.version$major, R.version$minor, sep = "."),
   steps = STEPS,
   sample = list(
-    include_sona = INCLUDE_SONA,
-    drop_sona_from_parents = DROP_SONA_FROM_PARENTS,
     min_plausible_parent_age = MIN_PLAUSIBLE_PARENT_AGE,
     reverse_concern_scales = REVERSE_CONCERN_SCALES,
     n_participants = nrow(participants),
@@ -100,7 +97,6 @@ writeLines(
     sprintf('  "r_version": "%s",', manifest$r_version),
     sprintf('  "steps": [%s],', paste0('"', STEPS, '"', collapse = ", ")),
     '  "sample": {',
-    sprintf('    "include_sona": %s,', tolower(as.character(INCLUDE_SONA))),
     sprintf('    "reverse_concern_scales": %s,', tolower(as.character(REVERSE_CONCERN_SCALES))),
     sprintf('    "n_participants": %d,', manifest$sample$n_participants),
     sprintf('    "n_adults": %d,', manifest$sample$n_adults),
