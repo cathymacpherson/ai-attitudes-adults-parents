@@ -34,7 +34,6 @@ TABLE_ORDER = [
     "model_c_interaction_test.tex",
     "model_d_comfort.tex",
     "residual_diagnostics.tex",
-    "robust_se_comparison.tex",
     "supp_redundancy_att.tex",
     "supp_redundancy_intent.tex",
 ]

@@ -253,48 +253,8 @@ robust_se_comparison$conclusion_changes <-
 write_result_csv(residual_diagnostics, "11_residual_diagnostics")
 write_result_csv(robust_se_comparison, "11_robust_se_comparison")
 
-# ---- Tables ----------------------------------------------------------------
-# The manuscript-facing table is restricted to the headline contrasts/
-# coefficients (Models A and B) that motivate the sensitivity check; Model C's
-# full coefficient-by-coefficient comparison is reported in the CSV only, to
-# keep the printed table to a size a reader will actually scan.
-
-headline <- robust_se_comparison[robust_se_comparison$model %in% c("A", "B"), ]
-write_apa_table(
-  data.frame(
-    Outcome = headline$outcome,
-    b = fmt_num(headline$estimate, 2),
-    ci_std = fmt_ci(headline$ci_low_standard, headline$ci_high_standard, 2),
-    p_std = fmt_p(headline$p_standard),
-    ci_rob = fmt_ci(headline$ci_low_robust, headline$ci_high_robust, 2),
-    p_rob = fmt_p(headline$p_robust),
-    stringsAsFactors = FALSE
-  ),
-  file = file.path(TEX_DIR, "robust_se_comparison.tex"),
-  caption = paste0(
-    "Sensitivity of the headline tool-type effects to cluster-robust standard errors"
-  ),
-  label = "tab:robust-se",
-  align = "lrcrcr",
-  header = paste(
-    "Outcome &",
-    "$b$ &",
-    "\\multicolumn{2}{c}{Model-based} & \\multicolumn{2}{c}{Cluster-robust (CR2)} \\\\",
-    "\\cmidrule(lr){3-4} \\cmidrule(lr){5-6}",
-    " & & 95\\% CI & $p$ & 95\\% CI & $p$"
-  ),
-  note = paste0(
-    "Model A rows are the adjusted bespoke-minus-general contrast (overall); ",
-    "Model B rows are the ai\\_type coefficient at step 3 (direct effect). ",
-    "Model-based $p$ for Model A is FDR-adjusted within its effect family, as ",
-    "in Table \\ref{tab:model-a-adjusted}; Model B's is unadjusted, as in Table ",
-    "\\ref{tab:model-b-tool}. The cluster-robust (CR2, clustered on participant) ",
-    "$p$ carries the same adjustment as the model-based $p$ beside it, so the ",
-    "two columns differ only in the standard-error estimator. Model C's full ",
-    "coefficient-by-coefficient comparison is in ",
-    "11\\_robust\\_se\\_comparison.csv, not reproduced here."
-  )
-)
+# Numbers are still computed and saved (11_robust_se_comparison.csv) for
+# reference; no robust_se_comparison.tex table is written.
 
 write_apa_table(
   data.frame(
