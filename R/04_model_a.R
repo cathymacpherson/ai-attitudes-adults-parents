@@ -260,7 +260,9 @@ write_result_csv(model_a_coefficients, "04_model_a_coefficients")
 write_result_csv(model_a_effects, "04_model_a_effects")
 write_result_csv(model_a_emmeans, "04_model_a_estimated_means")
 
-# ---- Main table -------------------------------------------------------------
+# ---- Main table (long format: one row-block per effect) --------------------
+# Row-blocks rather than column-blocks, so the table stays narrow enough to
+# fit a document page instead of running the three effects side by side.
 
 effect_cell <- function(effect, level, model = "Adjusted") {
   idx <- match(paste(subscale_labels_a, effect, level, model),
@@ -285,58 +287,45 @@ dz_cell <- function(level) {
   fmt_num(model_a_effects$estimate[idx], 2)
 }
 
-for (model_name in c("Adjusted")) {
-  tool <- effect_cell("Tool type (overall)", "", model_name)
-  group <- effect_cell("Respondent type (overall)", "", model_name)
-  inter <- effect_cell("Tool type x respondent type", "", model_name)
-
-  tab <- data.frame(
-    Outcome = subscale_labels_a,
-    tool_b = tool$b, tool_ci = tool$ci, tool_t = tool$t, tool_df = tool$df,
-    tool_p = tool$p, tool_dz = dz_cell("Overall"),
-    group_b = group$b, group_ci = group$ci, group_t = group$t,
-    group_df = group$df, group_p = group$p,
-    int_b = inter$b, int_t = inter$t, int_df = inter$df, int_p = inter$p,
+# $d_z$ only applies to the tool-type contrast, so it is blank ("--") for the
+# other two effect blocks rather than recomputed for them.
+effect_block <- function(effect, group_label, dz = NULL) {
+  cells <- effect_cell(effect, "")
+  data.frame(
+    Outcome = c(group_label, paste0("\\quad ", subscale_labels_a)),
+    b = c("", cells$b), ci = c("", cells$ci), t = c("", cells$t),
+    df = c("", cells$df), p = c("", cells$p),
+    dz = c("", if (is.null(dz)) rep("--", length(subscale_labels_a)) else dz),
     stringsAsFactors = FALSE
-  )
-
-  suffix <- tolower(model_name)
-  write_apa_table(
-    tab,
-    file = file.path(TEX_DIR, paste0("model_a_", suffix, ".tex")),
-    caption = sprintf(
-      "%s mixed-effects estimates of AI tool type and respondent group on ATAMHS subscales",
-      model_name
-    ),
-    label = paste0("tab:model-a-", suffix),
-    align = "lrcrrrrrcrrrrrrr",
-    size = "\\small",
-    header = paste(
-      "Outcome &",
-      "\\multicolumn{6}{c}{Bespoke $-$ general} &",
-      "\\multicolumn{5}{c}{Parent $-$ adult} &",
-      "\\multicolumn{4}{c}{Interaction} \\\\",
-      "\\cmidrule(lr){2-7} \\cmidrule(lr){8-12} \\cmidrule(lr){13-16}",
-      " & $b$ & 95\\% CI & $t$ & $df$ & $p$ & $d_z$",
-      "& $b$ & 95\\% CI & $t$ & $df$ & $p$",
-      "& $b$ & $t$ & $df$ & $p$"
-    ),
-    # The model specification, degrees of freedom and multiplicity correction
-    # are described in the Data Analysis section. The note carries only what a
-    # reader cannot infer from the column headers or the text: the units, the
-    # weighting used when averaging over factors, and the basis of $d_z$, which
-    # is why it matches the pooled contrast rather than averaging the two
-    # respondent groups.
-    note = paste0(
-      "$b$ is in scale points (1--7). Estimates average over respondent group ",
-      "and gender using proportional weights. $d_z$ is the ",
-      "within-participant standardised mean difference, computed on the ",
-      "combined difference scores."
-    )
   )
 }
 
-# ---- Estimated means table --------------------------------------------------
+write_apa_table(
+  rbind(
+    effect_block("Tool type (overall)", "Bespoke $-$ general", dz = dz_cell("Overall")),
+    effect_block("Respondent type (overall)", "Parent $-$ adult"),
+    effect_block("Tool type x respondent type", "Interaction")
+  ),
+  file = file.path(TEX_DIR, "model_a_adjusted.tex"),
+  caption = "Adjusted mixed-effects estimates of AI tool type and respondent group on ATAMHS subscales",
+  label = "tab:model-a-adjusted",
+  align = "lrcrrrr",
+  size = "\\small",
+  header = c("Outcome", "$b$", "95\\% CI", "$t$", "$df$", "$p$", "$d_z$"),
+  # The model specification, degrees of freedom and multiplicity correction
+  # are described in the Data Analysis section. The note carries only what a
+  # reader cannot infer from the column headers or the text: the units, the
+  # weighting used when averaging over factors, and why $d_z$ is blank outside
+  # the tool-type block.
+  note = paste0(
+    "$b$ is in scale points (1--7). Estimates average over respondent group ",
+    "and gender using proportional weights. $d_z$, the within-participant ",
+    "standardised mean difference computed on the combined difference ",
+    "scores, applies only to the tool-type contrast."
+  )
+)
+
+# ---- Estimated means table (long format: one row-block per respondent group)
 
 emm_cell <- function(rt, at) {
   idx <- match(paste(subscale_labels_a, rt, at, "Adjusted"),
@@ -348,35 +337,24 @@ emm_cell <- function(rt, at) {
           fmt_num(model_a_emmeans$ci95_high[idx], 2))
 }
 
-dz_cell <- function(rt) {
-  idx <- match(paste(subscale_labels_a, "Cohen's dz (bespoke - general)", rt),
-               paste(model_a_effects$outcome, model_a_effects$effect,
-                     model_a_effects$level))
-  fmt_num(model_a_effects$estimate[idx], 2)
+means_block <- function(rt, group_label) {
+  data.frame(
+    Outcome = c(group_label, paste0("\\quad ", subscale_labels_a)),
+    general = c("", emm_cell(rt, "General-purpose AI")),
+    bespoke = c("", emm_cell(rt, "Bespoke AI")),
+    dz = c("", dz_cell(rt)),
+    stringsAsFactors = FALSE
+  )
 }
 
 write_apa_table(
-  data.frame(
-    Outcome = subscale_labels_a,
-    ag = emm_cell("Adult", "General-purpose AI"),
-    ab = emm_cell("Adult", "Bespoke AI"),
-    adz = dz_cell("Adult"),
-    pg = emm_cell("Parent", "General-purpose AI"),
-    pb = emm_cell("Parent", "Bespoke AI"),
-    pdz = dz_cell("Parent"),
-    stringsAsFactors = FALSE
-  ),
+  rbind(means_block("Adult", "Adults"), means_block("Parent", "Parents/carers")),
   file = file.path(TEX_DIR, "model_a_estimated_means.tex"),
   caption = "Estimated marginal means for ATAMHS subscales by AI tool type and respondent group",
   label = "tab:model-a-means",
-  align = "lccrccr",
+  align = "lccc",
   size = "\\small",
-  header = paste(
-    "Outcome &",
-    "\\multicolumn{3}{c}{Adults} & \\multicolumn{3}{c}{Parents/carers} \\\\",
-    "\\cmidrule(lr){2-4} \\cmidrule(lr){5-7}",
-    " & General & Bespoke & $d_z$ & General & Bespoke & $d_z$"
-  ),
+  header = c("Outcome", "General", "Bespoke", "$d_z$"),
   note = paste0(
     "Estimated marginal means [95\\% CI] from the adjusted models, on the ",
     "1--7 response scale. $d_z$ is the within-participant standardised mean ",

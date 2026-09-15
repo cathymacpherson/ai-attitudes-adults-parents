@@ -274,6 +274,11 @@ for (outcome in MODEL_B_OUTCOMES) {
 }
 
 # ---- Table: main-effects coefficients, between and within -------------------
+# Long format: a between-person row-block followed by a within-person
+# row-block, rather than the two side by side, so the table stays narrow
+# enough to fit a document page. Demographic covariates have no within-person
+# component (they vary between participants only), so they are omitted from
+# the within-person block entirely rather than shown as a placeholder.
 
 PREDICTOR_LABELS <- c(
   pu = "Perceived usefulness", peou = "Perceived ease of use",
@@ -291,24 +296,28 @@ cell <- function(ct, term) {
     fmt_p(ct$p[idx]))
 }
 
+row_from_cell <- function(label, values) {
+  data.frame(
+    Predictor = paste0("\\quad ", label),
+    b = values[1], ci = values[2], t = values[3], df = values[4], p = values[5],
+    stringsAsFactors = FALSE
+  )
+}
+
 for (outcome in MODEL_B_OUTCOMES) {
   ct <- model_b_coefficients[model_b_coefficients$outcome_key == outcome, , drop = FALSE]
   outcome_label <- ANALYSIS_SCALES[[outcome]]$label
 
-  rows <- list()
+  btw_rows <- list()
+  wth_rows <- list()
   for (key in names(PREDICTOR_LABELS)) {
-    btw <- cell(ct, paste0(key, "_btw"))
-    wth <- cell(ct, paste0(key, "_wth"))
-    rows[[length(rows) + 1L]] <- data.frame(
-      Predictor = PREDICTOR_LABELS[[key]],
-      b_btw = btw[1], ci_btw = btw[2], t_btw = btw[3], df_btw = btw[4], p_btw = btw[5],
-      b_wth = wth[1], ci_wth = wth[2], t_wth = wth[3], df_wth = wth[4], p_wth = wth[5],
-      stringsAsFactors = FALSE
-    )
+    btw_rows[[length(btw_rows) + 1L]] <-
+      row_from_cell(PREDICTOR_LABELS[[key]], cell(ct, paste0(key, "_btw")))
+    wth_rows[[length(wth_rows) + 1L]] <-
+      row_from_cell(PREDICTOR_LABELS[[key]], cell(ct, paste0(key, "_wth")))
   }
-  predictors <- do.call(rbind, rows)
 
-  # Terms that exist only once (not decomposed) occupy the between columns.
+  # Terms that exist only once (not decomposed) occupy the between-person block.
   other_terms <- ct$term[!grepl("_btw$|_wth$", ct$term) & ct$term != "(Intercept)"]
   other_labels <- c(
     "respondent_typeParent" = "Parent/carer (vs adult)",
@@ -316,20 +325,20 @@ for (outcome in MODEL_B_OUTCOMES) {
     "gender_adjFemale" = "Female (vs male)",
     "education_c" = "Education (centred)"
   )
-  other_rows <- list()
   for (term in other_terms) {
     if (grepl("^ai_type", term)) next  # reported in the attenuation table
-    value <- cell(ct, term)
     label <- if (term %in% names(other_labels)) other_labels[[term]] else term
-    other_rows[[length(other_rows) + 1L]] <- data.frame(
-      Predictor = label,
-      b_btw = value[1], ci_btw = value[2], t_btw = value[3], df_btw = value[4], p_btw = value[5],
-      b_wth = "--", ci_wth = "--", t_wth = "--", df_wth = "--", p_wth = "--",
-      stringsAsFactors = FALSE
-    )
+    btw_rows[[length(btw_rows) + 1L]] <- row_from_cell(label, cell(ct, term))
   }
 
-  tab <- rbind(predictors, do.call(rbind, other_rows))
+  group_row <- function(label) {
+    data.frame(Predictor = label, b = "", ci = "", t = "", df = "", p = "",
+               stringsAsFactors = FALSE)
+  }
+  tab <- rbind(
+    group_row("Between-person"), do.call(rbind, btw_rows),
+    group_row("Within-person"), do.call(rbind, wth_rows)
+  )
 
   write_apa_table(
     tab,
@@ -339,22 +348,18 @@ for (outcome in MODEL_B_OUTCOMES) {
       decapitalise(outcome_label)
     ),
     label = paste0("tab:model-b-coef-", outcome),
-    align = "lrcrrrrcrrrr",
+    align = "lrcrrr",
     size = "\\small",
-    header = paste(
-      "Predictor &",
-      "\\multicolumn{5}{c}{Between-person} & \\multicolumn{5}{c}{Within-person} \\\\",
-      "\\cmidrule(lr){2-6} \\cmidrule(lr){7-11}",
-      " & $b$ & 95\\% CI & $t$ & $df$ & $p$ & $b$ & 95\\% CI & $t$ & $df$ & $p$"
-    ),
+    header = c("Predictor", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
     # The decomposition itself is explained in the Data Analysis section. What
-    # remains here is the unit, why some rows have no within-person entry, and
-    # that the tool-type coefficient is reported elsewhere, since its absence
-    # from this table would otherwise look like an omission.
+    # remains here is the unit, why demographic covariates are absent from the
+    # within-person block, and that the tool-type coefficient is reported
+    # elsewhere, since its absence from this table would otherwise look like
+    # an omission.
     note = paste0(
       "$b$ is in scale points (1--7). Demographic covariates and respondent ",
-      "group vary between participants only, so have no within-person ",
-      "component. The tool-type coefficient is reported separately."
+      "group vary between participants only, so are omitted from the ",
+      "within-person block. The tool-type coefficient is reported separately."
     )
   )
 }
@@ -366,12 +371,15 @@ for (outcome in MODEL_B_OUTCOMES) {
 # final row is the robustness check that reverses which constructs are omitted.
 step_keys <- intersect(MODEL_B_STEPS, c("S1", "S2", "S3"))
 if (all(c("S2", "S3") %in% MODEL_B_STEPS)) step_keys <- c(step_keys, "Alt")
+# Short outcome labels here (not ANALYSIS_SCALES$label) to keep the Outcome
+# column narrow.
+TOOL_EFFECT_OUTCOME_LABELS <- c(att = "Attitudes", intent = "Intentions")
 tool_tab_rows <- list()
 for (outcome in MODEL_B_OUTCOMES) {
   rows <- model_b_tool_effect[model_b_tool_effect$outcome_key == outcome, , drop = FALSE]
   idx <- match(step_keys, rows$step)
   tool_tab_rows[[length(tool_tab_rows) + 1L]] <- data.frame(
-    Outcome = c(ANALYSIS_SCALES[[outcome]]$label,
+    Outcome = c(TOOL_EFFECT_OUTCOME_LABELS[[outcome]],
                 rep("", length(step_keys) - 1L)),
     Step = c(
       S1 = "Before perceptions (total effect)",

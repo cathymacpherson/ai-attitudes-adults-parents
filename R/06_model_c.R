@@ -108,7 +108,9 @@ for (oc in unique(model_c_coefficients$outcome[c1_mask])) {
 write_result_csv(model_c_steps, "06_model_c_steps")
 write_result_csv(model_c_coefficients, "06_model_c_coefficients")
 
-# ---- Table: main-effects coefficients, both outcomes side by side ------------
+# ---- Table: main-effects coefficients (long format: one row-block per outcome)
+# One row-block per outcome rather than the two side by side, so the table
+# stays narrow enough to fit a document page.
 
 C_TERM_LABELS <- c(
   "ai_typeBespoke AI" = "Bespoke AI (vs general-purpose)",
@@ -133,45 +135,42 @@ c_cell <- function(outcome, term) {
     fmt_p(ct$p_fdr[idx]))
 }
 
-c_rows <- list()
-for (term in names(C_TERM_LABELS)) {
-  att <- c_cell("att", term)
-  intent <- c_cell("intent", term)
-  c_rows[[length(c_rows) + 1L]] <- data.frame(
-    Predictor = C_TERM_LABELS[[term]],
-    b_att = att[1], ci_att = att[2], t_att = att[3], df_att = att[4], p_att = att[5],
-    b_int = intent[1], ci_int = intent[2], t_int = intent[3], df_int = intent[4], p_int = intent[5],
-    stringsAsFactors = FALSE
-  )
-}
-
 r2_line <- function(outcome) {
   row <- model_c_steps[model_c_steps$outcome_key == outcome &
                          model_c_steps$step == "C1", , drop = FALSE]
   fmt_num(row$r2_marginal, 3)
 }
-c_rows[[length(c_rows) + 1L]] <- data.frame(
-  Predictor = "$R^2_m$",
-  b_att = r2_line("att"), ci_att = "", t_att = "", df_att = "", p_att = "",
-  b_int = r2_line("intent"), ci_int = "", t_int = "", df_int = "", p_int = "",
-  stringsAsFactors = FALSE
-)
+
+outcome_block <- function(outcome, group_label) {
+  rows <- lapply(names(C_TERM_LABELS), function(term) {
+    values <- c_cell(outcome, term)
+    data.frame(
+      Predictor = paste0("\\quad ", C_TERM_LABELS[[term]]),
+      b = values[1], ci = values[2], t = values[3], df = values[4], p = values[5],
+      stringsAsFactors = FALSE
+    )
+  })
+  rbind(
+    data.frame(Predictor = group_label, b = "", ci = "", t = "", df = "", p = "",
+               stringsAsFactors = FALSE),
+    do.call(rbind, rows),
+    data.frame(Predictor = "\\quad $R^2_m$", b = r2_line(outcome),
+               ci = "", t = "", df = "", p = "", stringsAsFactors = FALSE)
+  )
+}
 
 write_apa_table(
-  do.call(rbind, c_rows),
+  rbind(
+    outcome_block("att", "Attitudes"),
+    outcome_block("intent", "Behavioural intentions")
+  ),
   file = file.path(TEX_DIR, "model_c_coefficients.tex"),
   caption = paste0("Demographic and generative-AI familiarity predictors of ",
                    "attitudes and behavioural intentions"),
   label = "tab:model-c",
-  align = "lrcrrrcrrrr",
+  align = "lrcrrr",
   size = "\\small",
-  header = paste(
-    "Predictor &",
-    "\\multicolumn{5}{c}{Attitudes} &",
-    "\\multicolumn{5}{c}{Behavioural intentions} \\\\",
-    "\\cmidrule(lr){2-6} \\cmidrule(lr){7-11}",
-    " & $b$ & 95\\% CI & $t$ & $df$ & $p$ & $b$ & 95\\% CI & $t$ & $df$ & $p$"
-  ),
+  header = c("Predictor", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
   # Model specification is in the Data Analysis section. Retained here: the
   # unit, the symbol definition, and why the perception subscales are absent --
   # without which their omission reads as an oversight.
