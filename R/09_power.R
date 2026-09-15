@@ -287,59 +287,9 @@ n80_range <- function(key) {
   paste0(min(ns, na.rm = TRUE), "--", max(ns, na.rm = TRUE))
 }
 
-# ---- Power table ------------------------------------------------------------
-
-power_cell <- function(key, icc) {
-  row <- power_at_target[power_at_target$key == key & power_at_target$icc == icc, ]
-  if (!nrow(row)) return("--")
-  paste0(fmt_num(100 * row$power[1], 1), "\\%")
-}
-
-power_tab <- do.call(rbind, lapply(list(
-  list(key = "tool", label = "Bespoke vs general-purpose AI (within participants)",
-       target = paste0("$d_z$ = ", fmt_num(TARGET_DZ_TOOL, 2))),
-  list(key = "usefulness", label = "Perceived usefulness (between participants)",
-       target = paste0("$\\beta$ = ", fmt_num(TARGET_BETA_PU, 2))),
-  list(key = "usefulness_conservative", label = "\\quad conservative anchor",
-       target = paste0("$\\beta$ = ", fmt_num(TARGET_BETA_PU_CONSERVATIVE, 2))),
-  list(key = "group_null", label = "Adult vs parent/carer (false-positive check)",
-       target = "$b$ = 0")
-), function(spec) data.frame(
-  Effect = spec$label, Target = spec$target,
-  p30 = power_cell(spec$key, 0.3),
-  p50 = power_cell(spec$key, 0.5),
-  p70 = power_cell(spec$key, 0.7),
-  N80 = if (spec$key %in% c("tool", "usefulness")) n80_range(spec$key) else "--",
-  stringsAsFactors = FALSE
-)))
-
-write_apa_table(
-  power_tab,
-  file = file.path(TEX_DIR, "power_analysis.tex"),
-  caption = "A priori power for the focal effects across a range of intraclass correlations",
-  label = "tab:power",
-  align = "llrrrr",
-  size = "\\small",
-  header = sprintf(paste(
-    "Effect & Target &",
-    "\\multicolumn{3}{c}{Power at $N$ = %d} & $N$ for 80\\%% \\\\",
-    "\\cmidrule(lr){3-5}",
-    " &  & ICC .30 & ICC .50 & ICC .70 & "
-  ), POWER_TARGET_N),
-  note = paste0(
-    "Power estimated by Monte Carlo simulation with the simr package ",
-    "(", format(POWER_NSIM, big.mark = ","), " simulations per estimate; ",
-    format(POWER_NSIM_CURVE, big.mark = ","), " per point on the sample-size ",
-    "curves), $\\alpha$ = ", POWER_ALPHA, ", two-tailed, with Satterthwaite ",
-    "degrees of freedom so that the simulated test matches the reported ",
-    "analyses. Effect sizes and design parameters were specified in advance, ",
-    "independent of the data collected. $N$ is the number of participants, each ",
-    "contributing two ratings; following Maas and Hox (2005), $N$ = ",
-    POWER_TARGET_N, " level-2 units exceeds the 50 required for accurate ",
-    "fixed-effect standard errors. The final row sets the group difference to ",
-    "zero and should recover the nominal 5\\% rejection rate."
-  )
-)
+# Numbers are still computed and saved (09_power_results.csv,
+# 09_power_at_target_n.csv, 09_power_curves.csv) for reference; no
+# power_analysis.tex table is written -- already reported in the manuscript text.
 
 message("  N for 80% power: tool = ", n80_range("tool"),
         ", usefulness = ", n80_range("usefulness"))

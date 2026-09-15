@@ -41,7 +41,6 @@ subscale_labels_a <- unname(
   vapply(ANALYSIS_SCALES[MODEL_A_OUTCOMES], function(s) s$label, character(1))
 )
 
-UNADJUSTED_RHS <- "ai_type * respondent_type + (1 | participant_id)"
 ADJUSTED_RHS <- paste(
   "ai_type * respondent_type +",
   paste(ADJUSTMENT_COVARIATES, collapse = " + "),
@@ -70,14 +69,14 @@ fit_rows <- list()
 for (outcome in MODEL_A_OUTCOMES) {
   label <- ANALYSIS_SCALES[[outcome]]$label
 
-  for (model_name in c("Unadjusted", "Adjusted")) {
-    rhs <- if (model_name == "Unadjusted") UNADJUSTED_RHS else ADJUSTED_RHS
+  for (model_name in c("Adjusted")) {
+    rhs <- ADJUSTED_RHS
     formula <- stats::as.formula(paste(outcome, "~", rhs))
 
     # Complete cases on the model's own variables, so the reported n matches
     # what was actually fitted.
     model_vars <- c(outcome, "ai_type", "respondent_type", "participant_id",
-                    if (model_name == "Adjusted") ADJUSTMENT_COVARIATES)
+                    ADJUSTMENT_COVARIATES)
     dat <- long[stats::complete.cases(long[, model_vars]), , drop = FALSE]
 
     res <- fit_lmer(formula, dat)
@@ -276,9 +275,9 @@ effect_cell <- function(effect, level, model = "Adjusted") {
   )
 }
 
-# Within-participant effect sizes are descriptive, so they do not vary between
-# the adjusted and unadjusted models. "Overall" matches the pooled model
-# contrast; the group-specific values accompany the estimated means.
+# Within-participant effect sizes are descriptive. "Overall" matches the
+# pooled model contrast; the group-specific values accompany the estimated
+# means.
 dz_cell <- function(level) {
   idx <- match(paste(subscale_labels_a, "Cohen's dz (bespoke - general)", level),
                paste(model_a_effects$outcome, model_a_effects$effect,
@@ -286,7 +285,7 @@ dz_cell <- function(level) {
   fmt_num(model_a_effects$estimate[idx], 2)
 }
 
-for (model_name in c("Unadjusted", "Adjusted")) {
+for (model_name in c("Adjusted")) {
   tool <- effect_cell("Tool type (overall)", "", model_name)
   group <- effect_cell("Respondent type (overall)", "", model_name)
   inter <- effect_cell("Tool type x respondent type", "", model_name)

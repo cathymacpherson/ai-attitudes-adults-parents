@@ -32,7 +32,7 @@ FIG_DIR <- file.path(OUT_DIR, "figures")
 # Two parent/carer respondents reported an implausible age (below 18),
 # apparently their child's age entered by mistake. They are retained and only
 # the age is set to missing, so they drop out of age-adjusted models via
-# complete-case selection but stay in descriptives and unadjusted models.
+# complete-case selection but stay in descriptives.
 MIN_PLAUSIBLE_PARENT_AGE <- 18
 
 # Adolescents aged 16-17 were eligible to self-report, so under-18 ages in the
