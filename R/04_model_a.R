@@ -307,7 +307,7 @@ write_apa_table(
     effect_block("Tool type x respondent type", "Interaction")
   ),
   file = file.path(TEX_DIR, "model_a_adjusted.tex"),
-  caption = "Adjusted mixed-effects estimates of AI tool type and respondent group on ATAMHS subscales",
+  caption = "Mixed-effects estimates of AI tool type and respondent group on ATAMHS subscales",
   label = "tab:model-a-adjusted",
   align = "lrcrrrr",
   size = "\\small",
