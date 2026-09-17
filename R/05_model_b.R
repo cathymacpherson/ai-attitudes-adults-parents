@@ -344,7 +344,7 @@ for (outcome in MODEL_B_OUTCOMES) {
     tab,
     file = file.path(TEX_DIR, paste0("model_b_coefficients_", outcome, ".tex")),
     caption = sprintf(
-      "Between- and within-person predictors of %s (step 3)",
+      "Between- and within-person predictors of %s",
       decapitalise(outcome_label)
     ),
     label = paste0("tab:model-b-coef-", outcome),
