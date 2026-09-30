@@ -94,11 +94,20 @@ cell <- function(rows, target_label, component, absorber_label) {
     fmt_ci(rows$ci95_low[idx], rows$ci95_high[idx], 2))
 }
 
-for (outcome in MODEL_B_OUTCOMES) {
-  outcome_label <- ANALYSIS_SCALES[[outcome]]$label
+# Both outcomes in one table, as a row-block each: the comparison the table
+# exists to make (does an absorber take the coefficient away?) reads the same
+# way for each outcome, so they belong side by side.
+REDUNDANCY_OUTCOME_LABELS <- c(att = "Attitudes",
+                               intent = "Behavioural intentions")
+
+redundancy_block <- function(outcome, group_label) {
   rows <- supp_redundancy[supp_redundancy$outcome_key == outcome, , drop = FALSE]
 
-  tab_rows <- list()
+  tab_rows <- list(
+    data.frame(Construct = group_label,
+               b_none = "", p_none = "", b_trust = "", p_trust = "",
+               b_pu = "", p_pu = "", stringsAsFactors = FALSE)
+  )
   for (target_key in names(REDUNDANCY_TARGETS)) {
     target_label <- REDUNDANCY_TARGETS[[target_key]]
     for (component in c("Between", "Within")) {
@@ -106,7 +115,7 @@ for (outcome in MODEL_B_OUTCOMES) {
       trust <- cell(rows, target_label, component, "+ Trust")
       pu <- cell(rows, target_label, component, "+ Perceived usefulness")
       tab_rows[[length(tab_rows) + 1L]] <- data.frame(
-        Construct = paste0(target_label, " (", tolower(component), ")"),
+        Construct = paste0("\\quad ", target_label, " (", tolower(component), ")"),
         b_none = none[1], p_none = none[2],
         b_trust = trust[1], p_trust = trust[2],
         b_pu = pu[1], p_pu = pu[2],
@@ -114,36 +123,36 @@ for (outcome in MODEL_B_OUTCOMES) {
       )
     }
   }
-  tab <- do.call(rbind, tab_rows)
-
-  write_apa_table(
-    tab,
-    file = file.path(TEX_DIR, paste0("supp_redundancy_", outcome, ".tex")),
-    caption = sprintf(
-      paste0(
-        "Environmental concern and oversight preference coefficients predicting ",
-        "%s, alone versus alongside trust or perceived usefulness"
-      ),
-      decapitalise(outcome_label)
-    ),
-    label = paste0("tab:supp-redundancy-", outcome),
-    align = "lrcrcrc",
-    size = "\\small",
-    header = paste(
-      "Construct &",
-      "\\multicolumn{2}{c}{Alone} & \\multicolumn{2}{c}{+ Trust} &",
-      "\\multicolumn{2}{c}{+ Usefulness} \\\\",
-      "\\cmidrule(lr){2-3} \\cmidrule(lr){4-5} \\cmidrule(lr){6-7}",
-      " & $b$ & $p$ & $b$ & $p$ & $b$ & $p$"
-    ),
-    note = paste0(
-      "Each construct is entered with tool type, respondent group, and ",
-      "demographics, plus only the named absorber; all columns share the ",
-      "same rows. Losing significance once an absorber is added indicates ",
-      "shared variance with it, not a genuine null."
-    )
-  )
+  do.call(rbind, tab_rows)
 }
+
+write_apa_table(
+  do.call(rbind, lapply(MODEL_B_OUTCOMES, function(oc) {
+    redundancy_block(oc, REDUNDANCY_OUTCOME_LABELS[[oc]])
+  })),
+  file = file.path(TEX_DIR, "supp_redundancy.tex"),
+  caption = paste0(
+    "Environmental concern and oversight preference coefficients predicting ",
+    "attitudes and behavioural intentions, alone versus alongside trust or ",
+    "perceived usefulness"
+  ),
+  label = "tab:supp-redundancy",
+  align = "lrcrcrc",
+  size = "\\small",
+  header = paste(
+    "Construct &",
+    "\\multicolumn{2}{c}{Alone} & \\multicolumn{2}{c}{+ Trust} &",
+    "\\multicolumn{2}{c}{+ Usefulness} \\\\",
+    "\\cmidrule(lr){2-3} \\cmidrule(lr){4-5} \\cmidrule(lr){6-7}",
+    " & $b$ & $p$ & $b$ & $p$ & $b$ & $p$"
+  ),
+  note = paste0(
+    "Each construct is entered with tool type, respondent group, and ",
+    "demographics, plus only the named absorber; all columns share the ",
+    "same rows within each outcome. Losing significance once an absorber is ",
+    "added indicates shared variance with it, not a genuine null."
+  )
+)
 
 message("  redundancy models: ", nrow(supp_redundancy), " coefficients across ",
         length(REDUNDANCY_TARGETS), " constructs x ", length(MODEL_B_OUTCOMES),
