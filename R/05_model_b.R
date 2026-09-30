@@ -383,28 +383,33 @@ for (outcome in MODEL_B_OUTCOMES) {
 # final row is the robustness check that reverses which constructs are omitted.
 step_keys <- intersect(MODEL_B_STEPS, c("S1", "S2", "S3"))
 if (all(c("S2", "S3") %in% MODEL_B_STEPS)) step_keys <- c(step_keys, "Alt")
-# Short outcome labels here (not ANALYSIS_SCALES$label) to keep the Outcome
-# column narrow.
-TOOL_EFFECT_OUTCOME_LABELS <- c(att = "Attitudes", intent = "Intentions")
+# The outcome is a group-header row rather than its own column, matching
+# model_c_coefficients and the step table above.
+TOOL_EFFECT_OUTCOME_LABELS <- c(att = "Attitudes",
+                                intent = "Behavioural intentions")
+TOOL_EFFECT_STEP_LABELS <- c(
+  S1 = "Before perceptions (total effect)",
+  S2 = "Adjusting for core TAM",
+  S3 = "Adjusting for all perceptions (direct effect)",
+  Alt = "Adjusting for extended constructs only"
+)
 tool_tab_rows <- list()
 for (outcome in MODEL_B_OUTCOMES) {
   rows <- model_b_tool_effect[model_b_tool_effect$outcome_key == outcome, , drop = FALSE]
   idx <- match(step_keys, rows$step)
-  tool_tab_rows[[length(tool_tab_rows) + 1L]] <- data.frame(
-    Outcome = c(TOOL_EFFECT_OUTCOME_LABELS[[outcome]],
-                rep("", length(step_keys) - 1L)),
-    Step = c(
-      S1 = "Before perceptions (total effect)",
-      S2 = "Adjusting for core TAM",
-      S3 = "Adjusting for all perceptions (direct effect)",
-      Alt = "Adjusting for extended constructs only"
-    )[step_keys],
-    b = fmt_num(rows$estimate[idx], 2),
-    ci = fmt_ci(rows$ci95_low[idx], rows$ci95_high[idx], 2),
-    t = fmt_num(rows$t[idx], 2),
-    df = as.character(round(rows$df[idx])),
-    p = fmt_p(rows$p[idx]),
-    stringsAsFactors = FALSE
+  tool_tab_rows[[length(tool_tab_rows) + 1L]] <- rbind(
+    data.frame(Step = TOOL_EFFECT_OUTCOME_LABELS[[outcome]],
+               b = "", ci = "", t = "", df = "", p = "",
+               stringsAsFactors = FALSE),
+    data.frame(
+      Step = paste0("\\quad ", TOOL_EFFECT_STEP_LABELS[step_keys]),
+      b = fmt_num(rows$estimate[idx], 2),
+      ci = fmt_ci(rows$ci95_low[idx], rows$ci95_high[idx], 2),
+      t = fmt_num(rows$t[idx], 2),
+      df = as.character(round(rows$df[idx])),
+      p = fmt_p(rows$p[idx]),
+      stringsAsFactors = FALSE
+    )
   )
 }
 
@@ -413,8 +418,8 @@ write_apa_table(
   file = file.path(TEX_DIR, "model_b_tool_effect.tex"),
   caption = "Bespoke versus general-purpose AI before and after adjusting for perceptions",
   label = "tab:model-b-tool",
-  align = "llrcrrr",
-  header = c("Outcome", "Model", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
+  align = "lrcrrr",
+  header = c("Model", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
   # What each row adjusts for is stated in its own label, and the attenuation
   # is interpreted in the text, so only the unit needs stating here.
   note = "$b$ is the bespoke-minus-general difference in scale points."
