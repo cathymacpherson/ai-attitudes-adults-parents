@@ -238,14 +238,19 @@ write_result_csv(model_b_vif, "05_model_b_vif")
 write_result_csv(model_b_extra_terms, "05_model_b_interaction_and_attitude_terms")
 
 # ---- Table: hierarchical steps ----------------------------------------------
+# Both outcomes in one table, as a row-block each rather than two separate
+# tables: the blocks being compared are the same sequence, so reading the
+# increments across outcomes matters more than keeping them apart. Intentions
+# carry one block the attitudes model does not (attitudes enter as a
+# predictor), so the two row-blocks are deliberately uneven.
 
-for (outcome in MODEL_B_OUTCOMES) {
+steps_block <- function(outcome, group_label) {
   rows <- model_b_steps[model_b_steps$outcome_key == outcome, , drop = FALSE]
-  outcome_label <- ANALYSIS_SCALES[[outcome]]$label
-
-  write_apa_table(
+  rbind(
+    data.frame(Step = group_label, r2m = "", dr2 = "", chisq = "", df = "",
+               p = "", aic = "", stringsAsFactors = FALSE),
     data.frame(
-      Step = rows$step_label,
+      Step = paste0("\\quad ", rows$step_label),
       r2m = fmt_num(rows$r2_marginal, 3),
       dr2 = fmt_num(rows$delta_r2_marginal, 3),
       chisq = fmt_num(rows$lrt_chisq, 2),
@@ -253,25 +258,32 @@ for (outcome in MODEL_B_OUTCOMES) {
       p = fmt_p(rows$lrt_p),
       aic = fmt_num(rows$aic, 1),
       stringsAsFactors = FALSE
-    ),
-    file = file.path(TEX_DIR, paste0("model_b_steps_", outcome, ".tex")),
-    caption = sprintf("Hierarchical mixed-effects models predicting %s",
-                      decapitalise(outcome_label)),
-    label = paste0("tab:model-b-steps-", outcome),
-    align = "lrrrrrr",
-    header = c("Block", "$R^2_m$", "$\\Delta R^2_m$", "$\\chi^2$", "$df$",
-               "$p$", "AIC"),
-    # Estimation and the block structure are described in the Data Analysis
-    # section; retained here are the two symbol definitions and the fact that
-    # the blocks share a sample, without which the increments are not
-    # comparable.
-    note = paste0(
-      "$R^2_m$ is the marginal (fixed-effects) $R^2$; $\\Delta R^2_m$ is the ",
-      "increment over the preceding block. All blocks are fitted on identical ",
-      "cases."
     )
   )
 }
+
+write_apa_table(
+  rbind(
+    steps_block("att", "Attitudes"),
+    steps_block("intent", "Behavioural intentions")
+  ),
+  file = file.path(TEX_DIR, "model_b_steps.tex"),
+  caption = paste0("Hierarchical mixed-effects models predicting attitudes ",
+                   "and behavioural intentions"),
+  label = "tab:model-b-steps",
+  align = "lrrrrrr",
+  header = c("Block", "$R^2_m$", "$\\Delta R^2_m$", "$\\chi^2$", "$df$",
+             "$p$", "AIC"),
+  # Estimation and the block structure are described in the Data Analysis
+  # section; retained here are the two symbol definitions and the fact that
+  # the blocks share a sample, without which the increments are not
+  # comparable.
+  note = paste0(
+    "$R^2_m$ is the marginal (fixed-effects) $R^2$; $\\Delta R^2_m$ is the ",
+    "increment over the preceding block. All blocks are fitted on identical ",
+    "cases within each outcome."
+  )
+)
 
 # ---- Table: main-effects coefficients, between and within -------------------
 # Long format: a between-person row-block followed by a within-person
