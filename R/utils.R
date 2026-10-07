@@ -346,7 +346,16 @@ write_apa_table <- function(df, file, caption, label = NULL, note = NULL,
 
   rows <- if (nrow(body)) {
     vapply(seq_len(nrow(body)), function(i) {
-      paste0(paste(unlist(body[i, ], use.names = FALSE), collapse = " & "), " \\\\")
+      cells <- unlist(body[i, ], use.names = FALSE)
+      # Group-header rows follow the pipeline-wide convention: the group name
+      # in the first column, empty strings everywhere else. Emitted as one
+      # spanning cell rather than a padded row, because otherwise the header
+      # text -- which is usually far longer than any label beneath it -- sets
+      # the width of the first column and pushes the data columns off the page.
+      if (length(cells) > 1L && nzchar(cells[1L]) && !any(nzchar(cells[-1L]))) {
+        return(sprintf("\\multicolumn{%d}{l}{%s} \\\\", length(cells), cells[1L]))
+      }
+      paste0(paste(cells, collapse = " & "), " \\\\")
     }, character(1))
   } else character(0)
 
