@@ -138,7 +138,7 @@ c_cell <- function(outcome, term) {
 r2_line <- function(outcome) {
   row <- model_c_steps[model_c_steps$outcome_key == outcome &
                          model_c_steps$step == "C1", , drop = FALSE]
-  fmt_num(row$r2_marginal, 3)
+  fmt_r(row$r2_marginal, 3)
 }
 
 outcome_block <- function(outcome, group_label) {

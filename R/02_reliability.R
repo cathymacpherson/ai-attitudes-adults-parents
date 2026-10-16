@@ -66,7 +66,7 @@ lookup <- function(respondent, tool) {
     paste(subscale_labels, respondent, tool),
     paste(reliability$subscale, reliability$respondent_type, reliability$ai_type)
   )
-  fmt_num(reliability$estimate[idx], 2)
+  fmt_r(reliability$estimate[idx], 2)
 }
 
 # Short row labels shared with the correlation tables (TABLE_VAR_LABELS in

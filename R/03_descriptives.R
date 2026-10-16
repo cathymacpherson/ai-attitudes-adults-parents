@@ -366,7 +366,7 @@ for (at in levels(long$ai_type)) {
 
   cells <- matrix(NA_character_, n_vars, n_vars)
   for (k in seq_along(pair_i)) {
-    cells[pair_i[k], pair_j[k]] <- paste0(fmt_num(pair_r[k], 2), star(pair_p_fdr[k]))
+    cells[pair_i[k], pair_j[k]] <- paste0(fmt_r(pair_r[k], 2), star(pair_p_fdr[k]))
   }
   tab <- data.frame(
     Variable = sprintf("%d. %s", seq_len(n_vars), correlation_labels),

@@ -277,6 +277,13 @@ fmt_num <- function(x, digits = 2, dash = "--") {
   ifelse(is.na(x), dash, formatC(x, format = "f", digits = digits))
 }
 
+# APA drops the leading zero on statistics that cannot exceed 1 in absolute
+# value (correlations, reliabilities, R^2, ICCs, alpha levels). Statistics that
+# can (b, d, t, skew) keep it, so use fmt_num for those.
+fmt_r <- function(x, digits = 2, dash = "--") {
+  sub("^(-?)0\\.", "\\1.", fmt_num(x, digits = digits, dash = dash))
+}
+
 # "M (SD)" cell, formatted with fmt_num -- identical in both papers' own
 # 03_descriptives.R, so shared here rather than duplicated.
 mean_sd <- function(x, digits = 1) {

@@ -251,8 +251,8 @@ steps_block <- function(outcome, group_label) {
                p = "", aic = "", stringsAsFactors = FALSE),
     data.frame(
       Step = paste0("\\quad ", rows$step_label),
-      r2m = fmt_num(rows$r2_marginal, 3),
-      dr2 = fmt_num(rows$delta_r2_marginal, 3),
+      r2m = fmt_r(rows$r2_marginal, 3),
+      dr2 = fmt_r(rows$delta_r2_marginal, 3),
       chisq = fmt_num(rows$lrt_chisq, 2),
       df = ifelse(is.na(rows$lrt_df), "--", as.character(rows$lrt_df)),
       p = fmt_p(rows$lrt_p),
