@@ -132,15 +132,15 @@ save_figure(fig_a, "model_a_tool_effect", width = 7, height = 4)
 outcome_labels_b <- vapply(ANALYSIS_SCALES[MODEL_B_OUTCOMES], function(s) s$label, character(1))
 
 # ---- Figure B: Model B's between/within predictor coefficients -------------
-# The step-by-step tool-type attenuation (S1-S3, plus the extended-only
+# The step-by-step tool-type attenuation (Blocks 1-3, plus the extended-only
 # robustness check) is easily read off the numbers already in the text, so it
-# has no figure. What benefits from one is the full step-3 coefficient set:
+# has no figure. What benefits from one is the full Block 3 coefficient set:
 # six predictors x between/within x two outcomes is dense in a table, and the
 # text is built entirely around contrasts between them (privacy predicting
 # only within-participant, ease of use predicting intentions only between) --
 # exactly what a forest plot surfaces at a glance.
 
-model_b_coef_main <- model_b_coefficients[model_b_coefficients$step == "S3", , drop = FALSE]
+model_b_coef_main <- model_b_coefficients[model_b_coefficients$block == "B3", , drop = FALSE]
 level_suffix <- c("Between-person" = "btw", "Within-person" = "wth")
 model_b_predictor_rows <- list()
 for (key in names(PREDICTOR_LABELS)) {

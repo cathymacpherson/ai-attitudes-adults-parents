@@ -13,13 +13,13 @@
 #         produce this, which is the reason for using a mixed model rather than
 #         four separate regressions.
 #
-# Steps are fitted with ML for the likelihood-ratio tests (a REML likelihood is
+# Blocks are fitted with ML for the likelihood-ratio tests (a REML likelihood is
 # not comparable across different fixed-effect structures) and refitted with
 # REML for coefficient inference.
 #
-# ai_type is retained at every step. Its coefficient changes meaning as
-# predictors enter: at step 1 it is the total bespoke-versus-general difference,
-# and at step 3 it is the difference remaining once perceptions are accounted
+# ai_type is retained in every block. Its coefficient changes meaning as
+# predictors enter: in Block 1 it is the total bespoke-versus-general difference,
+# and in Block 3 it is the difference remaining once perceptions are accounted
 # for. Both are reported, because the attenuation between them is the finding.
 
 # Runnable on its own: sets up the session if it is not already set up.
@@ -47,55 +47,58 @@ EXTENDED <- as.vector(rbind(
 TOOL_INTERACTIONS <- c("ai_type:pu_wth", "ai_type:trust_wth")
 ATTITUDE_TERMS <- c("att_btw", "att_wth")
 
-# Each step adds one block to the ones before it. Steps are assembled from the
-# blocks listed in MODEL_B_STEPS, so a block can be dropped without leaving its
-# terms behind in later steps and without the step numbering going stale.
+# Each block adds its terms to those of the blocks before it. Keys B1--B4 match
+# the Block numbering in the paper. Models are assembled from the blocks listed
+# in MODEL_B_INCLUDED, so a block can be dropped without leaving its terms
+# behind in later blocks; displayed labels are numbered by position.
 MODEL_B_BLOCKS <- list(
-  S1 = list(label = "Tool type, group, demographics", terms = BASE_TERMS),
-  S2 = list(label = "+ core TAM", terms = CORE_TAM),
-  S3 = list(label = "+ trust, privacy, oversight, environment",
+  B1 = list(label = "Tool type, group, demographics", terms = BASE_TERMS),
+  B2 = list(label = "+ core TAM", terms = CORE_TAM),
+  B3 = list(label = "+ trust, privacy, oversight, environment",
             terms = EXTENDED),
-  S4 = list(label = "+ predictor $\\times$ tool type",
-            terms = TOOL_INTERACTIONS),
-  S5 = list(label = "+ attitudes towards AI", terms = ATTITUDE_TERMS,
+  interactions = list(label = "+ predictor $\\times$ tool type",
+                      terms = TOOL_INTERACTIONS),
+  B4 = list(label = "+ attitudes towards AI", terms = ATTITUDE_TERMS,
             outcomes = "intent")
 )
 
-# S4 is omitted: the interaction block was non-significant for both outcomes and
-# added no explanatory power, and the same reassurance is available from the
-# similarity of the perception effects across tool types.
-MODEL_B_STEPS <- c("S1", "S2", "S3", "S5")
+# The interactions block is not part of the paper's block sequence and is
+# omitted: it was non-significant for both outcomes and added no explanatory
+# power, and the same reassurance is available from the similarity of the
+# perception effects across tool types. Adding it here would renumber the
+# displayed labels of any block that follows it.
+MODEL_B_INCLUDED <- c("B1", "B2", "B3", "B4")
 
-step_definitions <- function(outcome) {
-  keys <- intersect(MODEL_B_STEPS, names(MODEL_B_BLOCKS))
+block_definitions <- function(outcome) {
+  keys <- intersect(MODEL_B_INCLUDED, names(MODEL_B_BLOCKS))
   keys <- Filter(function(key) {
     limit <- MODEL_B_BLOCKS[[key]]$outcomes
     is.null(limit) || outcome %in% limit
   }, keys)
 
-  steps <- list()
+  blocks <- list()
   terms <- character(0)
   for (i in seq_along(keys)) {
     key <- keys[i]
     terms <- c(terms, MODEL_B_BLOCKS[[key]]$terms)
-    steps[[key]] <- list(
+    blocks[[key]] <- list(
       label = paste0(i, ". ", MODEL_B_BLOCKS[[key]]$label),
       terms = terms
     )
   }
-  steps
+  blocks
 }
 
-# The step reported as the main-effects model: the full predictor set, without
+# The block reported as the main-effects model: the full predictor set, without
 # interactions and without attitude, so one table answers one question.
-MAIN_STEP <- "S3"
+MAIN_BLOCK <- "B3"
 
 model_formula <- function(outcome, terms) {
   stats::as.formula(paste(outcome, "~", paste(terms, collapse = " + "),
                           "+ (1 | participant_id)"))
 }
 
-# Every step must be fitted on identical rows, or the likelihood-ratio tests
+# Every block must be fitted on identical rows, or the likelihood-ratio tests
 # compare models on different data.
 analysis_rows <- function(outcome, all_terms) {
   vars <- unique(c(outcome, "participant_id",
@@ -104,7 +107,7 @@ analysis_rows <- function(outcome, all_terms) {
   long[stats::complete.cases(long[, vars]), , drop = FALSE]
 }
 
-step_rows <- list()
+block_rows <- list()
 coef_rows <- list()
 tool_rows <- list()
 vif_rows <- list()
@@ -113,8 +116,8 @@ attitude_block_rows <- list()
 
 for (outcome in MODEL_B_OUTCOMES) {
   outcome_label <- ANALYSIS_SCALES[[outcome]]$label
-  steps <- step_definitions(outcome)
-  dat <- analysis_rows(outcome, steps[[length(steps)]]$terms)
+  blocks <- block_definitions(outcome)
+  dat <- analysis_rows(outcome, blocks[[length(blocks)]]$terms)
 
   message("  ", outcome_label, ": n = ", length(unique(dat$participant_id)),
           " participants, ", nrow(dat), " observations")
@@ -122,15 +125,15 @@ for (outcome in MODEL_B_OUTCOMES) {
   ml_fits <- list()
   reml_fits <- list()
 
-  for (step_key in names(steps)) {
-    form <- model_formula(outcome, steps[[step_key]]$terms)
+  for (block_key in names(blocks)) {
+    form <- model_formula(outcome, blocks[[block_key]]$terms)
     ml <- fit_lmer(form, dat, reml = FALSE)
     reml <- fit_lmer(form, dat, reml = TRUE)
-    ml_fits[[step_key]] <- ml$fit
-    reml_fits[[step_key]] <- reml$fit
+    ml_fits[[block_key]] <- ml$fit
+    reml_fits[[block_key]] <- reml$fit
 
     r2 <- r2_mixed(reml$fit)
-    previous <- if (step_key == "S1") NULL else ml_fits[[which(names(steps) == step_key) - 1L]]
+    previous <- if (block_key == "B1") NULL else ml_fits[[which(names(blocks) == block_key) - 1L]]
 
     lrt <- list(chisq = NA_real_, df = NA_real_, p = NA_real_)
     if (!is.null(previous) && !is.null(ml$fit)) {
@@ -140,13 +143,13 @@ for (outcome in MODEL_B_OUTCOMES) {
       lrt$p <- comparison$`Pr(>Chisq)`[2]
     }
 
-    delta_r2 <- if (step_key == "S1") NA_real_ else
-      r2[["marginal"]] - step_rows[[length(step_rows)]]$r2_marginal
+    delta_r2 <- if (block_key == "B1") NA_real_ else
+      r2[["marginal"]] - block_rows[[length(block_rows)]]$r2_marginal
 
-    step_rows[[length(step_rows) + 1L]] <- data.frame(
+    block_rows[[length(block_rows) + 1L]] <- data.frame(
       outcome = outcome_label, outcome_key = outcome,
-      step = step_key, step_label = steps[[step_key]]$label,
-      n_terms = length(steps[[step_key]]$terms),
+      block = block_key, block_label = blocks[[block_key]]$label,
+      n_terms = length(blocks[[block_key]]$terms),
       r2_marginal = r2[["marginal"]], r2_conditional = r2[["conditional"]],
       delta_r2_marginal = delta_r2,
       aic = if (is.null(ml$fit)) NA_real_ else stats::AIC(ml$fit),
@@ -158,14 +161,14 @@ for (outcome in MODEL_B_OUTCOMES) {
 
     if (is.null(reml$fit)) next
 
-    # Tool-type coefficient at this step: total effect at S1, direct effect once
-    # perceptions are partialled out at S3 onwards.
+    # Tool-type coefficient in this block: total effect in Block 1, direct effect
+    # once perceptions are partialled out from Block 3 onwards.
     ct <- coefficient_table(reml$fit)
     tool_term <- ct[grepl("^ai_type", ct$term) & !grepl(":", ct$term), , drop = FALSE]
     if (nrow(tool_term)) {
       tool_rows[[length(tool_rows) + 1L]] <- data.frame(
         outcome = outcome_label, outcome_key = outcome,
-        step = step_key, step_label = steps[[step_key]]$label,
+        block = block_key, block_label = blocks[[block_key]]$label,
         tool_term[, c("estimate", "std_error", "df", "t", "p",
                       "ci95_low", "ci95_high")],
         row.names = NULL, stringsAsFactors = FALSE
@@ -181,7 +184,7 @@ for (outcome in MODEL_B_OUTCOMES) {
   # usefulness and ease of use: if the tool-type effect survives here and not
   # in Block 2, the attenuation is specific to the core constructs rather than
   # a general consequence of adding predictors.
-  if (all(c("S2", "S3") %in% MODEL_B_STEPS)) {
+  if (all(c("B2", "B3") %in% MODEL_B_INCLUDED)) {
     alt <- fit_lmer(model_formula(outcome, c(BASE_TERMS, EXTENDED)), dat)
     if (!is.null(alt$fit)) {
       ct <- coefficient_table(alt$fit)
@@ -189,8 +192,8 @@ for (outcome in MODEL_B_OUTCOMES) {
                       drop = FALSE]
       tool_rows[[length(tool_rows) + 1L]] <- data.frame(
         outcome = outcome_label, outcome_key = outcome,
-        step = "Alt",
-        step_label = "Extended constructs only, without core TAM",
+        block = "Alt",
+        block_label = "Extended constructs only, without core TAM",
         tool_term[, c("estimate", "std_error", "df", "t", "p",
                       "ci95_low", "ci95_high")],
         row.names = NULL, stringsAsFactors = FALSE
@@ -199,26 +202,26 @@ for (outcome in MODEL_B_OUTCOMES) {
   }
 
   # Coefficients for the main-effects model.
-  main_fit <- reml_fits[[MAIN_STEP]]
+  main_fit <- reml_fits[[MAIN_BLOCK]]
   if (!is.null(main_fit)) {
     coef_rows[[length(coef_rows) + 1L]] <- coefficient_table(
-      main_fit, outcome = outcome_label, outcome_key = outcome, step = MAIN_STEP
+      main_fit, outcome = outcome_label, outcome_key = outcome, block = MAIN_BLOCK
     )
     v <- vif_fixed(main_fit)
     vif_rows[[length(vif_rows) + 1L]] <- data.frame(
-      outcome = outcome_label, outcome_key = outcome, step = MAIN_STEP,
+      outcome = outcome_label, outcome_key = outcome, block = MAIN_BLOCK,
       term = names(v), vif = unname(v),
       row.names = NULL, stringsAsFactors = FALSE
     )
   }
 
-  # Interaction and attitude steps are reported on their own, since adding them
+  # Interaction and attitude blocks are reported on their own, since adding them
   # changes the question rather than refining the same one.
-  for (extra_step in intersect(c("S4", "S5"), names(steps))) {
-    fit <- reml_fits[[extra_step]]
+  for (extra_block in intersect(c("interactions", "B4"), names(blocks))) {
+    fit <- reml_fits[[extra_block]]
     if (is.null(fit)) next
     ct <- coefficient_table(fit, outcome = outcome_label,
-                            outcome_key = outcome, step = extra_step)
+                            outcome_key = outcome, block = extra_block)
     keep <- grepl(":", ct$term) | ct$term %in% ATTITUDE_TERMS
     if (any(keep)) {
       attitude_path_rows[[length(attitude_path_rows) + 1L]] <- ct[keep, , drop = FALSE]
@@ -227,42 +230,42 @@ for (outcome in MODEL_B_OUTCOMES) {
     # the other perception coefficients (perceived usefulness no longer
     # predicts intentions once attitudes are in), so those need a table of
     # their own rather than only the two attitude terms.
-    if (extra_step == "S5") {
+    if (extra_block == "B4") {
       attitude_block_rows[[length(attitude_block_rows) + 1L]] <- ct
     }
   }
 }
 
-model_b_steps <- do.call(rbind, step_rows)
+model_b_blocks <- do.call(rbind, block_rows)
 model_b_coefficients <- do.call(rbind, coef_rows)
 model_b_tool_effect <- do.call(rbind, tool_rows)
 model_b_vif <- do.call(rbind, vif_rows)
 model_b_extra_terms <- do.call(rbind, attitude_path_rows)
 model_b_attitude_block <- do.call(rbind, attitude_block_rows)
 
-write_result_csv(model_b_steps, "05_model_b_steps")
+write_result_csv(model_b_blocks, "05_model_b_blocks")
 write_result_csv(model_b_coefficients, "05_model_b_coefficients")
-write_result_csv(model_b_tool_effect, "05_model_b_tool_effect_by_step")
+write_result_csv(model_b_tool_effect, "05_model_b_tool_effect_by_block")
 write_result_csv(model_b_vif, "05_model_b_vif")
 write_result_csv(model_b_extra_terms, "05_model_b_interaction_and_attitude_terms")
 if (!is.null(model_b_attitude_block)) {
   write_result_csv(model_b_attitude_block, "05_model_b_coefficients_attitude_block")
 }
 
-# ---- Table: hierarchical steps ----------------------------------------------
+# ---- Table: hierarchical blocks ---------------------------------------------
 # Both outcomes in one table, as a row-block each rather than two separate
 # tables: the blocks being compared are the same sequence, so reading the
 # increments across outcomes matters more than keeping them apart. Intentions
 # carry one block the attitudes model does not (attitudes enter as a
 # predictor), so the two row-blocks are deliberately uneven.
 
-steps_block <- function(outcome, group_label) {
-  rows <- model_b_steps[model_b_steps$outcome_key == outcome, , drop = FALSE]
+block_table_rows <- function(outcome, group_label) {
+  rows <- model_b_blocks[model_b_blocks$outcome_key == outcome, , drop = FALSE]
   rbind(
-    data.frame(Step = group_label, r2m = "", dr2 = "", chisq = "", df = "",
+    data.frame(Block = group_label, r2m = "", dr2 = "", chisq = "", df = "",
                p = "", aic = "", stringsAsFactors = FALSE),
     data.frame(
-      Step = paste0("\\quad ", rows$step_label),
+      Block = paste0("\\quad ", rows$block_label),
       r2m = fmt_r(rows$r2_marginal, 3),
       dr2 = fmt_r(rows$delta_r2_marginal, 3),
       chisq = fmt_num(rows$lrt_chisq, 2),
@@ -276,13 +279,13 @@ steps_block <- function(outcome, group_label) {
 
 write_apa_table(
   rbind(
-    steps_block("att", "Attitudes"),
-    steps_block("intent", "Behavioural intentions")
+    block_table_rows("att", "Attitudes"),
+    block_table_rows("intent", "Behavioural intentions")
   ),
-  file = file.path(TEX_DIR, "model_b_steps.tex"),
+  file = file.path(TEX_DIR, "model_b_blocks.tex"),
   caption = paste0("Hierarchical mixed-effects models predicting attitudes ",
                    "and behavioural intentions"),
-  label = "tab:model-b-steps",
+  label = "tab:model-b-blocks",
   align = "lrrrrrr",
   header = c("Block", "$R^2_m$", "$\\Delta R^2_m$", "$\\chi^2$", "$df$",
              "$p$", "AIC"),
@@ -428,33 +431,33 @@ if (!is.null(model_b_attitude_block)) {
   )
 }
 
-# ---- Table: tool-type effect across steps (total to direct) -----------------
+# ---- Table: tool-type effect across blocks (total to direct) ----------------
 
 # The attenuation table shows the tool-type coefficient as perceptions enter, so
 # it stops at the main model rather than continuing into any later block. The
 # final row is the robustness check that reverses which constructs are omitted.
-step_keys <- intersect(MODEL_B_STEPS, c("S1", "S2", "S3"))
-if (all(c("S2", "S3") %in% MODEL_B_STEPS)) step_keys <- c(step_keys, "Alt")
+block_keys <- intersect(MODEL_B_INCLUDED, c("B1", "B2", "B3"))
+if (all(c("B2", "B3") %in% MODEL_B_INCLUDED)) block_keys <- c(block_keys, "Alt")
 # The outcome is a group-header row rather than its own column, matching
-# model_c_coefficients and the step table above.
+# model_c_coefficients and the block table above.
 TOOL_EFFECT_OUTCOME_LABELS <- c(att = "Attitudes",
                                 intent = "Behavioural intentions")
-TOOL_EFFECT_STEP_LABELS <- c(
-  S1 = "Before perceptions (total effect)",
-  S2 = "Adjusting for core TAM",
-  S3 = "Adjusting for all perceptions (direct effect)",
+TOOL_EFFECT_BLOCK_LABELS <- c(
+  B1 = "Before perceptions (total effect)",
+  B2 = "Adjusting for core TAM",
+  B3 = "Adjusting for all perceptions (direct effect)",
   Alt = "Adjusting for extended constructs only"
 )
 tool_tab_rows <- list()
 for (outcome in MODEL_B_OUTCOMES) {
   rows <- model_b_tool_effect[model_b_tool_effect$outcome_key == outcome, , drop = FALSE]
-  idx <- match(step_keys, rows$step)
+  idx <- match(block_keys, rows$block)
   tool_tab_rows[[length(tool_tab_rows) + 1L]] <- rbind(
-    data.frame(Step = TOOL_EFFECT_OUTCOME_LABELS[[outcome]],
+    data.frame(Block = TOOL_EFFECT_OUTCOME_LABELS[[outcome]],
                b = "", ci = "", t = "", df = "", p = "",
                stringsAsFactors = FALSE),
     data.frame(
-      Step = paste0("\\quad ", TOOL_EFFECT_STEP_LABELS[step_keys]),
+      Block = paste0("\\quad ", TOOL_EFFECT_BLOCK_LABELS[block_keys]),
       b = fmt_num(rows$estimate[idx], 2),
       ci = fmt_ci(rows$ci95_low[idx], rows$ci95_high[idx], 2),
       t = fmt_num(rows$t[idx], 2),
@@ -477,12 +480,12 @@ write_apa_table(
   note = "$b$ is the bespoke-minus-general difference in scale points."
 )
 
-message("  step models: ", nrow(model_b_steps))
-if (any(model_b_steps$singular, na.rm = TRUE)) {
+message("  block models: ", nrow(model_b_blocks))
+if (any(model_b_blocks$singular, na.rm = TRUE)) {
   message("  NOTE: singular fit at ",
-          paste(unique(model_b_steps$step[which(model_b_steps$singular)]),
+          paste(unique(model_b_blocks$block[which(model_b_blocks$singular)]),
                 collapse = ", "))
 }
 max_vif <- max(model_b_vif$vif, na.rm = TRUE)
-message("  maximum VIF in the step-3 models: ", fmt_num(max_vif, 1),
+message("  maximum VIF in the Block 3 models: ", fmt_num(max_vif, 1),
         " (", model_b_vif$term[which.max(model_b_vif$vif)], ")")

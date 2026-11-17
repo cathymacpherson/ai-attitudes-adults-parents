@@ -25,7 +25,7 @@ TABLE_ORDER = [
     "model_a_adjusted.tex",
     "model_a_estimated_means.tex",
     "comfort_distribution.tex",
-    "model_b_steps.tex",
+    "model_b_blocks.tex",
     "model_b_coefficients_att.tex",
     "model_b_coefficients_intent.tex",
     "model_b_coefficients_intent_block4.tex",

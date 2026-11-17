@@ -73,9 +73,9 @@ refit_model_a <- function(outcome) {
 }
 
 refit_model_b <- function(outcome) {
-  steps <- step_definitions(outcome)
-  dat <- analysis_rows(outcome, steps[[length(steps)]]$terms)
-  form <- model_formula(outcome, steps[["S3"]]$terms)
+  blocks <- block_definitions(outcome)
+  dat <- analysis_rows(outcome, blocks[[length(blocks)]]$terms)
+  form <- model_formula(outcome, blocks[["B3"]]$terms)
   list(fit = lmerTest::lmer(form, data = dat, REML = TRUE), dat = dat)
 }
 
@@ -164,13 +164,13 @@ model_a_block$p_robust <- stats::p.adjust(model_a_block$p_robust_raw, method = P
 model_a_block$p_robust_raw <- NULL
 robust_rows[[length(robust_rows) + 1L]] <- model_a_block
 
-# ---- Model B: the direct-effect ai_type coefficient (step S3), both outcomes -
+# ---- Model B: the direct-effect ai_type coefficient (Block 3), both outcomes
 
 for (outcome in MODEL_B_OUTCOMES) {
   label <- ANALYSIS_SCALES[[outcome]]$label
   rf <- refit_model_b(outcome)
   residual_rows[[length(residual_rows) + 1L]] <-
-    diagnose_residuals(rf$fit, outcome, rf$dat, "B (step S3)", label)
+    diagnose_residuals(rf$fit, outcome, rf$dat, "B (Block 3)", label)
 
   ct_std <- coefficient_table(rf$fit)
   ct_rob <- clubSandwich::coef_test(rf$fit, vcov = "CR2", cluster = rf$dat$participant_id)
