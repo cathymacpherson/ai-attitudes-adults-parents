@@ -109,6 +109,7 @@ coef_rows <- list()
 tool_rows <- list()
 vif_rows <- list()
 attitude_path_rows <- list()
+attitude_block_rows <- list()
 
 for (outcome in MODEL_B_OUTCOMES) {
   outcome_label <- ANALYSIS_SCALES[[outcome]]$label
@@ -222,6 +223,13 @@ for (outcome in MODEL_B_OUTCOMES) {
     if (any(keep)) {
       attitude_path_rows[[length(attitude_path_rows) + 1L]] <- ct[keep, , drop = FALSE]
     }
+    # The full attitude-block model is kept as well: adding attitudes changes
+    # the other perception coefficients (perceived usefulness no longer
+    # predicts intentions once attitudes are in), so those need a table of
+    # their own rather than only the two attitude terms.
+    if (extra_step == "S5") {
+      attitude_block_rows[[length(attitude_block_rows) + 1L]] <- ct
+    }
   }
 }
 
@@ -230,12 +238,16 @@ model_b_coefficients <- do.call(rbind, coef_rows)
 model_b_tool_effect <- do.call(rbind, tool_rows)
 model_b_vif <- do.call(rbind, vif_rows)
 model_b_extra_terms <- do.call(rbind, attitude_path_rows)
+model_b_attitude_block <- do.call(rbind, attitude_block_rows)
 
 write_result_csv(model_b_steps, "05_model_b_steps")
 write_result_csv(model_b_coefficients, "05_model_b_coefficients")
 write_result_csv(model_b_tool_effect, "05_model_b_tool_effect_by_step")
 write_result_csv(model_b_vif, "05_model_b_vif")
 write_result_csv(model_b_extra_terms, "05_model_b_interaction_and_attitude_terms")
+if (!is.null(model_b_attitude_block)) {
+  write_result_csv(model_b_attitude_block, "05_model_b_coefficients_attitude_block")
+}
 
 # ---- Table: hierarchical steps ----------------------------------------------
 # Both outcomes in one table, as a row-block each rather than two separate
@@ -316,17 +328,19 @@ row_from_cell <- function(label, values) {
   )
 }
 
-for (outcome in MODEL_B_OUTCOMES) {
-  ct <- model_b_coefficients[model_b_coefficients$outcome_key == outcome, , drop = FALSE]
-  outcome_label <- ANALYSIS_SCALES[[outcome]]$label
-
+# Builds the between/within table from one model's coefficients. The main
+# (Block 3) tables omit the tool-type coefficient because the attenuation
+# table reports it; the attitude-block table has no such home for it, so it
+# is shown there, in the within-person block since tool type varies within
+# participants.
+coefficient_tab <- function(ct, labels, show_tool_type = FALSE) {
   btw_rows <- list()
   wth_rows <- list()
-  for (key in names(PREDICTOR_LABELS)) {
+  for (key in names(labels)) {
     btw_rows[[length(btw_rows) + 1L]] <-
-      row_from_cell(PREDICTOR_LABELS[[key]], cell(ct, paste0(key, "_btw")))
+      row_from_cell(labels[[key]], cell(ct, paste0(key, "_btw")))
     wth_rows[[length(wth_rows) + 1L]] <-
-      row_from_cell(PREDICTOR_LABELS[[key]], cell(ct, paste0(key, "_wth")))
+      row_from_cell(labels[[key]], cell(ct, paste0(key, "_wth")))
   }
 
   # Terms that exist only once (not decomposed) occupy the between-person block.
@@ -338,7 +352,13 @@ for (outcome in MODEL_B_OUTCOMES) {
     "education_c" = "Education (centred)"
   )
   for (term in other_terms) {
-    if (grepl("^ai_type", term)) next  # reported in the attenuation table
+    if (grepl("^ai_type", term)) {
+      if (show_tool_type) {
+        wth_rows[[length(wth_rows) + 1L]] <-
+          row_from_cell("Bespoke AI (vs general-purpose)", cell(ct, term))
+      }
+      next
+    }
     label <- if (term %in% names(other_labels)) other_labels[[term]] else term
     btw_rows[[length(btw_rows) + 1L]] <- row_from_cell(label, cell(ct, term))
   }
@@ -347,10 +367,16 @@ for (outcome in MODEL_B_OUTCOMES) {
     data.frame(Predictor = label, b = "", ci = "", t = "", df = "", p = "",
                stringsAsFactors = FALSE)
   }
-  tab <- rbind(
+  rbind(
     group_row("Between-person"), do.call(rbind, btw_rows),
     group_row("Within-person"), do.call(rbind, wth_rows)
   )
+}
+
+for (outcome in MODEL_B_OUTCOMES) {
+  ct <- model_b_coefficients[model_b_coefficients$outcome_key == outcome, , drop = FALSE]
+  outcome_label <- ANALYSIS_SCALES[[outcome]]$label
+  tab <- coefficient_tab(ct, PREDICTOR_LABELS)
 
   write_apa_table(
     tab,
@@ -372,6 +398,32 @@ for (outcome in MODEL_B_OUTCOMES) {
       "$b$ is in scale points (1--7). Demographic covariates and respondent ",
       "group vary between participants only, so are omitted from the ",
       "within-person block. The tool-type coefficient is reported separately."
+    )
+  )
+}
+
+# ---- Table: intentions model with attitudes added (Block 4) -----------------
+# Same layout as the main intentions table, with attitudes as a further
+# decomposed predictor.
+
+if (!is.null(model_b_attitude_block)) {
+  write_apa_table(
+    coefficient_tab(
+      model_b_attitude_block,
+      c(PREDICTOR_LABELS, att = "Attitudes towards AI"),
+      show_tool_type = TRUE
+    ),
+    file = file.path(TEX_DIR, "model_b_coefficients_intent_block4.tex"),
+    caption = paste0("Between- and within-person predictors of behavioural ",
+                     "intentions to use AI, with attitudes towards AI added"),
+    label = "tab:model-b-coef-intent-block4",
+    align = "lrcrrr",
+    size = "\\small",
+    header = c("Predictor", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
+    note = paste0(
+      "$b$ is in scale points (1--7). Demographic covariates and respondent ",
+      "group vary between participants only, so are omitted from the ",
+      "within-person block."
     )
   )
 }

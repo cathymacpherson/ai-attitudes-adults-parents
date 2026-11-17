@@ -28,6 +28,7 @@ TABLE_ORDER = [
     "model_b_steps.tex",
     "model_b_coefficients_att.tex",
     "model_b_coefficients_intent.tex",
+    "model_b_coefficients_intent_block4.tex",
     "model_b_tool_effect.tex",
     "model_c_coefficients.tex",
     "model_c_interaction_test.tex",
