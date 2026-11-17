@@ -116,10 +116,10 @@ STANDALONE_ITEMS <- list(
   safeguards = list(item = 14L, label = "Preference for data safeguards (item 14)")
 )
 
-TOOLS <- list(gen = "General-purpose AI", besp = "Bespoke AI")
+TOOLS <- list(gen = "General-purpose AI", besp = "Purpose-built AI")
 REPORT_GROUPS <- list(s = "Adult", p = "Parent")
 
-AI_TYPE_LEVELS <- c("General-purpose AI", "Bespoke AI")
+AI_TYPE_LEVELS <- c("General-purpose AI", "Purpose-built AI")
 RESPONDENT_LEVELS <- c("Adult", "Parent")
 
 # ---- Covariate coding -------------------------------------------------------

@@ -135,7 +135,7 @@ participants$ai_mh_use <- factor(
   levels = c("No", "Yes")
 )
 
-# Direct bespoke-vs-general comfort item (Model D).
+# Direct purpose-built-vs-general comfort item (Model D).
 comfort <- rep(NA_real_, nrow(raw))
 comfort[is_adult] <- parse_likert(raw$attn_comp_s[is_adult])
 comfort[!is_adult] <- parse_likert(raw$attn_comp_p[!is_adult])

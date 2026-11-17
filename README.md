@@ -1,7 +1,7 @@
 # Attitudes toward generative AI in mental health care
 
 Mixed-effects analyses of attitudes and behavioural intentions toward
-general-purpose versus bespoke generative AI tools for mental health, among
+general-purpose versus purpose-built generative AI tools for mental health, among
 Australian adults and parents/carers.
 
 This repository contains the analysis code only. It expects a de-identified,
@@ -64,7 +64,7 @@ install.packages(c("lme4", "lmerTest", "emmeans", "simr", "ggplot2", "clubSandwi
 | `01_load_prepare.R` | Analysis frames (`participants`, `long`) |
 | `02_reliability.R` | Internal consistency of the ATAMHS subscales |
 | `03_descriptives.R` | Demographics, subscale descriptives, correlations |
-| `04_model_a.R` | Perceptions of general-purpose vs. bespoke AI |
+| `04_model_a.R` | Perceptions of general-purpose vs. purpose-built AI |
 | `05_model_b.R` | Predictors of attitudes and intentions |
 | `06_model_c.R` | Demographic and familiarity predictors |
 | `07_model_d.R` | Direct comfort comparison (ordinal model) |

@@ -124,7 +124,7 @@ make_design <- function(n_participants) {
       seq_len(n_participants) / (n_participants + 1)
     )))
   )
-  design <- rbind(cbind(base, bespoke = 0L), cbind(base, bespoke = 1L))
+  design <- rbind(cbind(base, purpose_built = 0L), cbind(base, purpose_built = 1L))
 
   collinearity <- abs(stats::cor(design$parent, design$pu_btw))
   if (collinearity > 0.05) {
@@ -136,8 +136,8 @@ make_design <- function(n_participants) {
 
 build_model <- function(n_participants, icc, b_tool, b_pu, b_group = 0) {
   simr::makeLmer(
-    y ~ bespoke + parent + pu_btw + (1 | participant_id),
-    fixef = c("(Intercept)" = 4, "bespoke" = b_tool,
+    y ~ purpose_built + parent + pu_btw + (1 | participant_id),
+    fixef = c("(Intercept)" = 4, "purpose_built" = b_tool,
               "parent" = b_group, "pu_btw" = b_pu),
     VarCorr = icc,
     sigma = sqrt(1 - icc),
@@ -158,7 +158,7 @@ check_between <- check_vc$vcov[check_vc$grp == "participant_id"]
 check_resid <- check_vc$vcov[check_vc$grp == "Residual"]
 
 stopifnot(
-  isTRUE(all.equal(unname(lme4::fixef(check_model)[["bespoke"]]),
+  isTRUE(all.equal(unname(lme4::fixef(check_model)[["purpose_built"]]),
                    b_within_from_dz(TARGET_DZ_TOOL, check_icc))),
   isTRUE(all.equal(unname(lme4::fixef(check_model)[["pu_btw"]]), TARGET_BETA_PU)),
   isTRUE(all.equal(check_between, check_icc)),
@@ -175,7 +175,7 @@ message("  parameter check passed: between var = ", fmt_num(check_between, 3),
 conditions <- rbind(
   # Power at the planned sample size.
   do.call(rbind, lapply(POWER_ICCS, function(icc) rbind(
-    data.frame(key = "tool", term = "bespoke", icc = icc,
+    data.frame(key = "tool", term = "purpose_built", icc = icc,
                n_participants = POWER_TARGET_N, b_pu = TARGET_BETA_PU,
                nsim = POWER_NSIM, part = "target", stringsAsFactors = FALSE),
     data.frame(key = "usefulness", term = "pu_btw", icc = icc,
@@ -192,7 +192,7 @@ conditions <- rbind(
   # Sample-size curves.
   do.call(rbind, lapply(POWER_ICCS, function(icc) do.call(rbind, lapply(
     POWER_BREAKS, function(n) rbind(
-      data.frame(key = "tool", term = "bespoke", icc = icc, n_participants = n,
+      data.frame(key = "tool", term = "purpose_built", icc = icc, n_participants = n,
                  b_pu = TARGET_BETA_PU, nsim = POWER_NSIM_CURVE,
                  part = "curve", stringsAsFactors = FALSE),
       data.frame(key = "usefulness", term = "pu_btw", icc = icc,

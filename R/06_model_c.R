@@ -113,7 +113,7 @@ write_result_csv(model_c_coefficients, "06_model_c_coefficients")
 # stays narrow enough to fit a document page.
 
 C_TERM_LABELS <- c(
-  "ai_typeBespoke AI" = "Bespoke AI (vs general-purpose)",
+  "ai_typePurpose-built AI" = "Purpose-built AI (vs general-purpose)",
   "respondent_typeParent" = "Parent/carer (vs adult)",
   "age_c" = "Age (centred)",
   "gender_adjFemale" = "Female (vs male)",

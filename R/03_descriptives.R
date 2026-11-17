@@ -234,9 +234,9 @@ msd_cell <- function(rt, at) {
 desc_tab <- data.frame(
   Subscale = subscale_labels,
   adult_gen = msd_cell("Adult", "General-purpose AI"),
-  adult_besp = msd_cell("Adult", "Bespoke AI"),
+  adult_besp = msd_cell("Adult", "Purpose-built AI"),
   parent_gen = msd_cell("Parent", "General-purpose AI"),
-  parent_besp = msd_cell("Parent", "Bespoke AI"),
+  parent_besp = msd_cell("Parent", "Purpose-built AI"),
   stringsAsFactors = FALSE
 )
 
@@ -250,7 +250,7 @@ write_apa_table(
     "Subscale &",
     "\\multicolumn{2}{c}{Adults} & \\multicolumn{2}{c}{Parents/carers} \\\\",
     "\\cmidrule(lr){2-3} \\cmidrule(lr){4-5}",
-    " & General & Bespoke & General & Bespoke"
+    " & General & Purpose-built & General & Purpose-built"
   ),
   note = "Cells are $M$ ($SD$); all subscales are scored 1--7."
 )
@@ -259,7 +259,7 @@ write_apa_table(
 # Are attitudes and intentions favourable at all, irrespective of tool type?
 # Each outcome is centred on the scale midpoint (4, on the 1--7 ATAMHS scale)
 # and fit as an intercept-only mixed model with a by-participant random
-# intercept, so the two ratings per participant (general-purpose, bespoke) are
+# intercept, so the two ratings per participant (general-purpose, purpose-built) are
 # not treated as independent. The intercept of the centred outcome is then
 # exactly the test of the mean against the midpoint, with the same
 # Satterthwaite df used throughout the rest of the paper.
@@ -337,7 +337,7 @@ CORRELATION_VARS <- TABLE_VAR_ORDER
 correlation_labels <- unname(TABLE_VAR_LABELS[CORRELATION_VARS])
 
 for (at in levels(long$ai_type)) {
-  suffix <- if (at == "Bespoke AI") "bespoke" else "general"
+  suffix <- if (at == "Purpose-built AI") "purpose_built" else "general"
   block <- long[long$ai_type == at, CORRELATION_VARS]
   R <- stats::cor(block, use = "pairwise.complete.obs")
   write_result_csv(
@@ -380,9 +380,9 @@ for (at in levels(long$ai_type)) {
     file = file.path(TEX_DIR, paste0("correlations_", suffix, ".tex")),
     caption = sprintf(
       "Correlations among ATAMHS subscales (%s)",
-      if (at == "Bespoke AI") "bespoke AI" else "general-purpose AI"
+      if (at == "Purpose-built AI") "purpose-built AI" else "general-purpose AI"
     ),
-    label = paste0("tab:correlations-", suffix),
+    label = paste0("tab:correlations-", gsub("_", "-", suffix, fixed = TRUE)),
     align = paste0("l", strrep("r", n_vars - 1)),
     header = c("Variable", as.character(seq_len(n_vars - 1))),
     escape = TRUE,

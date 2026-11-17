@@ -1,4 +1,4 @@
-# Model D: the direct bespoke-versus-general comfort item.
+# Model D: the direct purpose-built-versus-general comfort item.
 #
 # "Compared with general-purpose AI tools (such as ChatGPT), how comfortable
 # would you feel using AI tools specifically designed for mental health care?"
@@ -81,7 +81,7 @@ comfort_tab <- data.frame(
 write_apa_table(
   comfort_tab,
   file = file.path(TEX_DIR, "comfort_distribution.tex"),
-  caption = paste0("Comfort using bespoke mental health AI compared with ",
+  caption = paste0("Comfort using purpose-built mental health AI compared with ",
                    "general-purpose AI tools"),
   label = "tab:comfort",
   align = "lrr",
@@ -152,7 +152,7 @@ d_tab <- data.frame(
 write_apa_table(
   d_tab,
   file = file.path(TEX_DIR, "model_d_comfort.tex"),
-  caption = paste0("Proportional-odds model of comfort using bespoke rather ",
+  caption = paste0("Proportional-odds model of comfort using purpose-built rather ",
                    "than general-purpose AI for mental health"),
   label = "tab:model-d",
   align = "lrcrr",
@@ -162,19 +162,19 @@ write_apa_table(
   # ratio, without which the sign cannot be read; and the interval method.
   note = paste0(
     "$n = ", nrow(d_data), "$. An odds ratio above 1 indicates greater relative ",
-    "comfort with bespoke tools. Confidence intervals and $p$ values use the ",
+    "comfort with purpose-built tools. Confidence intervals and $p$ values use the ",
     "Wald approximation."
   )
 )
 
 # ---- Convergent validity against the Model A attitude difference ------------
 # If the direct comparison item measures what the separately rated blocks
-# measure, respondents who rate bespoke tools more favourably should also report
+# measure, respondents who rate purpose-built tools more favourably should also report
 # greater comfort with them.
 
 att_wide <- long[, c("participant_id", "ai_type", "att")]
 gen <- att_wide[att_wide$ai_type == "General-purpose AI", c("participant_id", "att")]
-besp <- att_wide[att_wide$ai_type == "Bespoke AI", c("participant_id", "att")]
+besp <- att_wide[att_wide$ai_type == "Purpose-built AI", c("participant_id", "att")]
 paired <- merge(gen, besp, by = "participant_id", suffixes = c("_gen", "_besp"))
 paired$att_difference <- paired$att_besp - paired$att_gen
 paired <- merge(paired, comfort_data[, c("participant_id", "comfort")],
@@ -184,7 +184,7 @@ paired <- paired[stats::complete.cases(paired[, c("att_difference", "comfort")])
 validity <- stats::cor.test(paired$att_difference, paired$comfort,
                             method = "spearman", exact = FALSE)
 model_d_validity <- data.frame(
-  comparison = "Attitude difference (bespoke - general) vs comfort item",
+  comparison = "Attitude difference (purpose-built - general) vs comfort item",
   n = nrow(paired),
   spearman_rho = unname(validity$estimate),
   p = validity$p.value,

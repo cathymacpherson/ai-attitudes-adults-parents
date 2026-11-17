@@ -21,7 +21,7 @@ TABLE_ORDER = [
     "subscale_descriptives.tex",
     "midpoint_comparison.tex",
     "correlations_general.tex",
-    "correlations_bespoke.tex",
+    "correlations_purpose_built.tex",
     "model_a_adjusted.tex",
     "model_a_estimated_means.tex",
     "comfort_distribution.tex",

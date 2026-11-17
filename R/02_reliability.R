@@ -57,7 +57,7 @@ write_result_csv(reliability, "02_reliability")
 
 # Rows follow TABLE_VAR_ORDER (00_config.R) rather than SUBSCALES' own order,
 # so this table lists the same eight variables in the same order as the
-# correlations_general/correlations_bespoke tables.
+# correlations_general/correlations_purpose_built tables.
 subscale_labels <- unname(vapply(SUBSCALES[TABLE_VAR_ORDER], function(s) s$label, character(1)))
 n_items <- unname(vapply(SUBSCALES[TABLE_VAR_ORDER], function(s) length(s$items), integer(1)))
 
@@ -80,9 +80,9 @@ tab <- data.frame(
   Items = n_items,
   Coefficient = ifelse(n_items == 2L, "$r_{SB}$", "$\\alpha$"),
   adult_gen = lookup("Adult", "General-purpose AI"),
-  adult_besp = lookup("Adult", "Bespoke AI"),
+  adult_besp = lookup("Adult", "Purpose-built AI"),
   parent_gen = lookup("Parent", "General-purpose AI"),
-  parent_besp = lookup("Parent", "Bespoke AI"),
+  parent_besp = lookup("Parent", "Purpose-built AI"),
   stringsAsFactors = FALSE
 )
 
@@ -92,7 +92,7 @@ spanned_header <- paste(
   "Subscale & Items & Coef. &",
   "\\multicolumn{2}{c}{Adults} & \\multicolumn{2}{c}{Parents/carers} \\\\",
   "\\cmidrule(lr){4-5} \\cmidrule(lr){6-7}",
-  " &  &  & General & Bespoke & General & Bespoke"
+  " &  &  & General & Purpose-built & General & Purpose-built"
 )
 
 write_apa_table(
@@ -105,7 +105,7 @@ write_apa_table(
   note = paste0(
     "$\\alpha$ = Cronbach's alpha; $r_{SB}$ = Spearman-Brown coefficient, ",
     "reported for two-item subscales where $\\alpha$ is unstable. ",
-    "General = general-purpose AI tools; Bespoke = AI tools designed specifically ",
+    "General = general-purpose AI tools; Purpose-built = AI tools designed specifically ",
     "for mental health assessment or treatment."
   )
 )

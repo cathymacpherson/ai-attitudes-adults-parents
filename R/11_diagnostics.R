@@ -150,7 +150,7 @@ for (outcome in MODEL_A_OUTCOMES) {
   ]
 
   model_a_rows[[length(model_a_rows) + 1L]] <- data.frame(
-    model = "A", outcome = label, term = "Bespoke - general (overall)",
+    model = "A", outcome = label, term = "Purpose-built - general (overall)",
     estimate = con_std$estimate,
     se_standard = con_std$SE, p_standard = p_fdr_std,
     ci_low_standard = ci_std$lower.CL, ci_high_standard = ci_std$upper.CL,
@@ -175,7 +175,7 @@ for (outcome in MODEL_B_OUTCOMES) {
   ct_std <- coefficient_table(rf$fit)
   ct_rob <- clubSandwich::coef_test(rf$fit, vcov = "CR2", cluster = rf$dat$participant_id)
 
-  term <- "ai_typeBespoke AI"
+  term <- "ai_typePurpose-built AI"
   std_row <- ct_std[ct_std$term == term, ]
   rob_row <- ct_rob[ct_rob$Coef == term, ]
   crit_rob <- stats::qt(0.975, rob_row$df_Satt)

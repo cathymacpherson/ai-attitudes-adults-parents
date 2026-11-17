@@ -86,7 +86,7 @@ save_figure <- function(plot, name, width, height) {
 }
 
 # ---- Figure A: Model A's tool-type effect across the six ATAMHS subscales ---
-# The adjusted "bespoke - general" contrast, overall (averaged over respondent
+# The adjusted "purpose-built - general" contrast, overall (averaged over respondent
 # group), is the quantity model_a_adjusted.tex reports as its headline column.
 
 model_a_main <- model_a_effects[
@@ -122,7 +122,7 @@ fig_a <- ggplot2::ggplot(
     values = c("p < .05" = 16, "n.s." = 21)
   ) +
   ggplot2::labs(
-    x = expression(paste("Coefficient (", italic(b), "): bespoke AI - general-purpose AI")),
+    x = expression(paste("Coefficient (", italic(b), "): purpose-built AI - general-purpose AI")),
     y = NULL, colour = NULL, shape = NULL
   ) +
   fig_theme

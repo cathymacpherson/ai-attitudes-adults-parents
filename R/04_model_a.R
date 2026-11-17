@@ -53,7 +53,7 @@ ADJUSTED_RHS <- paste(
 cohens_dz <- function(outcome, subset_rows) {
   d <- long[subset_rows, c("participant_id", "ai_type", outcome)]
   gen <- d[d$ai_type == "General-purpose AI", c("participant_id", outcome)]
-  besp <- d[d$ai_type == "Bespoke AI", c("participant_id", outcome)]
+  besp <- d[d$ai_type == "Purpose-built AI", c("participant_id", outcome)]
   paired <- merge(gen, besp, by = "participant_id", suffixes = c("_gen", "_besp"))
   diff <- paired[[paste0(outcome, "_besp")]] - paired[[paste0(outcome, "_gen")]]
   diff <- diff[!is.na(diff)]
@@ -142,7 +142,7 @@ for (outcome in MODEL_A_OUTCOMES) {
       )
     }
 
-    # Bespoke minus general, overall and within each respondent group.
+    # Purpose-built minus general, overall and within each respondent group.
     tool_overall <- emmeans::contrast(emm_tool, "revpairwise")
     effect_rows[[length(effect_rows) + 1L]] <-
       grab(tool_overall, "Tool type (overall)")
@@ -225,8 +225,8 @@ for (outcome in MODEL_A_OUTCOMES) {
     dz <- cohens_dz(outcome, spec$rows)
     effect_rows[[length(effect_rows) + 1L]] <- data.frame(
       outcome = label, outcome_key = outcome, model = "Descriptive",
-      effect = "Cohen's dz (bespoke - general)", level = spec$label,
-      contrast = "Bespoke AI - General-purpose AI",
+      effect = "Cohen's dz (purpose-built - general)", level = spec$label,
+      contrast = "Purpose-built AI - General-purpose AI",
       estimate = unname(dz["dz"]), std_error = NA_real_, df = NA_real_,
       t = NA_real_, p = NA_real_, ci95_low = NA_real_, ci95_high = NA_real_,
       row.names = NULL, stringsAsFactors = FALSE
@@ -281,7 +281,7 @@ effect_cell <- function(effect, level, model = "Adjusted") {
 # pooled model contrast; the group-specific values accompany the estimated
 # means.
 dz_cell <- function(level) {
-  idx <- match(paste(subscale_labels_a, "Cohen's dz (bespoke - general)", level),
+  idx <- match(paste(subscale_labels_a, "Cohen's dz (purpose-built - general)", level),
                paste(model_a_effects$outcome, model_a_effects$effect,
                      model_a_effects$level))
   fmt_num(model_a_effects$estimate[idx], 2)
@@ -302,7 +302,7 @@ effect_block <- function(effect, group_label, dz = NULL) {
 
 write_apa_table(
   rbind(
-    effect_block("Tool type (overall)", "Bespoke $-$ general", dz = dz_cell("Overall")),
+    effect_block("Tool type (overall)", "Purpose-built $-$ general", dz = dz_cell("Overall")),
     effect_block("Respondent type (overall)", "Parent $-$ adult"),
     effect_block("Tool type x respondent type", "Interaction")
   ),
@@ -341,7 +341,7 @@ means_block <- function(rt, group_label) {
   data.frame(
     Outcome = c(group_label, paste0("\\quad ", subscale_labels_a)),
     general = c("", emm_cell(rt, "General-purpose AI")),
-    bespoke = c("", emm_cell(rt, "Bespoke AI")),
+    purpose_built = c("", emm_cell(rt, "Purpose-built AI")),
     dz = c("", dz_cell(rt)),
     stringsAsFactors = FALSE
   )
@@ -354,11 +354,11 @@ write_apa_table(
   label = "tab:model-a-means",
   align = "lccc",
   size = "\\small",
-  header = c("Outcome", "General", "Bespoke", "$d_z$"),
+  header = c("Outcome", "General", "Purpose-built", "$d_z$"),
   note = paste0(
     "Estimated marginal means [95\\% CI] from the adjusted models, on the ",
     "1--7 response scale. $d_z$ is the within-participant standardised mean ",
-    "difference (bespoke $-$ general) computed from the paired differences."
+    "difference (purpose-built $-$ general) computed from the paired differences."
   )
 )
 

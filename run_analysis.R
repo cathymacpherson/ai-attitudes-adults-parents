@@ -1,4 +1,4 @@
-# Attitudes and behavioural intentions toward general-purpose versus bespoke
+# Attitudes and behavioural intentions toward general-purpose versus purpose-built
 # generative AI for mental health, among community adults and parents/carers.
 #
 # Reads a scored dataset from data/cleaned_scored_data.csv and writes tidy

@@ -18,7 +18,7 @@
 # REML for coefficient inference.
 #
 # ai_type is retained in every block. Its coefficient changes meaning as
-# predictors enter: in Block 1 it is the total bespoke-versus-general difference,
+# predictors enter: in Block 1 it is the total purpose-built-versus-general difference,
 # and in Block 3 it is the difference remaining once perceptions are accounted
 # for. Both are reported, because the attenuation between them is the finding.
 
@@ -358,7 +358,7 @@ coefficient_tab <- function(ct, labels, show_tool_type = FALSE) {
     if (grepl("^ai_type", term)) {
       if (show_tool_type) {
         wth_rows[[length(wth_rows) + 1L]] <-
-          row_from_cell("Bespoke AI (vs general-purpose)", cell(ct, term))
+          row_from_cell("Purpose-built AI (vs general-purpose)", cell(ct, term))
       }
       next
     }
@@ -471,13 +471,13 @@ for (outcome in MODEL_B_OUTCOMES) {
 write_apa_table(
   do.call(rbind, tool_tab_rows),
   file = file.path(TEX_DIR, "model_b_tool_effect.tex"),
-  caption = "Bespoke versus general-purpose AI before and after adjusting for perceptions",
+  caption = "Purpose-built versus general-purpose AI before and after adjusting for perceptions",
   label = "tab:model-b-tool",
   align = "lrcrrr",
   header = c("Model", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
   # What each row adjusts for is stated in its own label, and the attenuation
   # is interpreted in the text, so only the unit needs stating here.
-  note = "$b$ is the bespoke-minus-general difference in scale points."
+  note = "$b$ is the purpose-built-minus-general difference in scale points."
 )
 
 message("  block models: ", nrow(model_b_blocks))
