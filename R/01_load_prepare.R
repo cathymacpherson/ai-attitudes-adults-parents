@@ -116,10 +116,18 @@ participants$child_relation <- collapse_other(raw$child_relation,
                                               keep = CHILD_RELATION_KEEP)
 
 # Prior use of generative AI for mental health purposes (own mental health for
-# adults, the child's for parents/carers).
-used_ai_mh <- rep(NA, nrow(raw))
-used_ai_mh[is_adult] <- trimws(as.character(raw$gai_s_mh_use[is_adult])) == "Yes"
-used_ai_mh[!is_adult] <- trimws(as.character(raw$gai_p_mh_use[!is_adult])) == "Yes"
+# adults, the child's for parents/carers). "Not sure" is grouped with "No". A
+# blank response is missing, except for adults who answered "No" or "Not sure"
+# to ever having used GenAI: they were not shown the item, so are scored "No",
+# matching the frequency gate above.
+mh_use_response <- rep(NA_character_, nrow(raw))
+mh_use_response[is_adult] <- trimws(as.character(raw$gai_s_mh_use[is_adult]))
+mh_use_response[!is_adult] <- trimws(as.character(raw$gai_p_mh_use[!is_adult]))
+used_ai_mh <- ifelse(is.na(mh_use_response) | !nzchar(mh_use_response), NA,
+                     mh_use_response == "Yes")
+if ("gai_ever" %in% names(raw)) {
+  used_ai_mh[is_adult & never] <- FALSE
+}
 participants$used_ai_mh <- used_ai_mh
 # Factor form for modelling; the logical form above is used for descriptives.
 participants$ai_mh_use <- factor(
