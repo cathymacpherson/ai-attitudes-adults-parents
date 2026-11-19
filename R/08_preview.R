@@ -25,7 +25,7 @@ message("08_preview")
 # manuscript position hasn't been pinned down yet) is appended afterwards in
 # alphabetical order, so nothing silently goes missing from the preview.
 MANUSCRIPT_TABLE_ORDER <- c(
-  "demographics.tex", "child_demographics.tex", "reliability.tex",
+  "reliability.tex",
   "model_a_adjusted.tex", "model_a_estimated_means.tex",
   "comfort_distribution.tex"
 )

@@ -21,7 +21,7 @@ raw <- utils::read.csv(DATA_FILE, stringsAsFactors = FALSE, check.names = FALSE)
 # ---- Participant-level frame ------------------------------------------------
 
 participants <- data.frame(
-  participant_id = as.character(raw$ResponseId),
+  participant_id = as.character(raw$participant_id),
   participant_type = tolower(trimws(as.character(raw$participant_type))),
   stringsAsFactors = FALSE
 )
@@ -32,10 +32,9 @@ participants$respondent_type <- ifelse(
 )
 participants$report_key <- ifelse(participants$respondent_type == "Adult", "s", "p")
 
-# Age: free-text years, falling back to the categorical item.
-age_text <- if ("demo_age_1_TEXT" %in% names(raw)) raw$demo_age_1_TEXT else raw$demo_age
+# Age in years; blank if not reported.
 participants$age <- suppressWarnings(as.numeric(
-  sub("^.*?(-?[0-9]+(\\.[0-9]+)?).*$", "\\1", trimws(as.character(age_text)))
+  sub("^.*?(-?[0-9]+(\\.[0-9]+)?).*$", "\\1", trimws(as.character(raw$demo_age)))
 ))
 
 gender_raw <- trimws(as.character(raw$demo_gender))
@@ -46,32 +45,6 @@ participants$gender <- factor(
 )
 
 participants$education <- map_scores(raw$demo_education, EDUCATION_SCORES)
-
-# EDUCATION_SCORES has no "Prefer not to say" entry (it's not an ordinal
-# education level), so map_scores() above returns NA for it same as for a
-# genuinely blank response. Kept separately here so descriptives can still
-# report it as its own category rather than silently folding it into missing.
-participants$education_raw <- trimws(as.character(raw$demo_education))
-
-income_raw <- trimws(as.character(raw$demo_income))
-income_raw[!nzchar(income_raw)] <- NA_character_
-participants$income <- factor(unname(INCOME_LABELS[income_raw]),
-                              levels = unname(INCOME_LABELS))
-
-# Cultural background. The response options append a long list of example
-# nationalities to each broad group; everything from " (e.g." onwards is
-# stripped so the table shows the group name alone. Levels follow the standard
-# classification order, with anything unrecognised appended rather than dropped.
-cultural_group <- trimws(sub("\\s*\\(e\\.g\\..*$", "",
-                             trimws(as.character(raw$demo_cultural_group))))
-cultural_group[!nzchar(cultural_group)] <- NA_character_
-participants$cultural_group <- factor(
-  cultural_group,
-  levels = c(
-    CULTURAL_GROUP_ORDER,
-    setdiff(sort(unique(stats::na.omit(cultural_group))), CULTURAL_GROUP_ORDER)
-  )
-)
 
 # GenAI use frequency: report-group specific column. Adults who answered "No"
 # or "Not sure" to ever having used GenAI are scored 0 (they were not shown the
@@ -90,30 +63,6 @@ tech_conf <- rep(NA_real_, nrow(raw))
 tech_conf[is_adult] <- map_scores(raw$tech_s_conf[is_adult], CONFIDENCE_SCORES)
 tech_conf[!is_adult] <- map_scores(raw$tech_p_conf[!is_adult], CONFIDENCE_SCORES)
 participants$tech_conf <- tech_conf
-
-# ---- Child characteristics --------------------------------------------------
-# Asked of the parent/carer sample only, with reference to the one child the
-# respondent answered about throughout. Adults are NA on all of these.
-
-participants$child_age <- suppressWarnings(as.numeric(
-  sub("^.*?(-?[0-9]+(\\.[0-9]+)?).*$", "\\1",
-      trimws(as.character(raw$child_age_1_TEXT)))
-))
-participants$child_age_band <- band_label(participants$child_age, CHILD_AGE_BANDS)
-participants$child_grade_group <- child_grade_group(raw$child_grade)
-
-child_gender <- trimws(as.character(raw$child_gender))
-child_gender[!nzchar(child_gender)] <- NA_character_
-participants$child_gender <- factor(child_gender,
-                                    levels = ordered_levels(child_gender))
-
-# Family setting collapses its catch-all and non-response options, matching the
-# treatment of respondent gender. Relationship to child collapses everything
-# other than the modal category, since each remaining arrangement is a single
-# case.
-participants$child_family_setting <- collapse_other(raw$child_family_setting)
-participants$child_relation <- collapse_other(raw$child_relation,
-                                              keep = CHILD_RELATION_KEEP)
 
 # Prior use of generative AI for mental health purposes (own mental health for
 # adults, the child's for parents/carers). "Not sure" is grouped with "No". A
@@ -155,25 +104,10 @@ add_step <- function(label, keep) {
   keep
 }
 
+# The dataset contains the analysed sample only: every participant exclusion,
+# including parents/carers whose child was outside the eligible age range, is
+# applied before the data are released.
 keep <- add_step("Cleaned and scored dataset", !is.na(participants$respondent_type))
-
-# Children outside the recruited age range make the respondent ineligible, so
-# the parent/carer is excluded outright. Respondents whose child's age is
-# missing are retained: ineligibility cannot be established for them, and an
-# unanswered question is not evidence of an out-of-range child.
-if (EXCLUDE_INELIGIBLE_CHILD_AGE) {
-  ineligible_child <- participants$respondent_type == "Parent" &
-    !is.na(participants$child_age) &
-    (participants$child_age < CHILD_ELIGIBLE_AGE_MIN |
-       participants$child_age > CHILD_ELIGIBLE_AGE_MAX)
-  keep <- add_step(
-    sprintf(
-      "Excluded parents/carers whose child was outside the eligible age range (%d-%d)",
-      CHILD_ELIGIBLE_AGE_MIN, CHILD_ELIGIBLE_AGE_MAX
-    ),
-    keep & !ineligible_child
-  )
-}
 
 # Implausible parent/carer ages are blanked rather than excluded: these
 # respondents appear to have entered their child's age instead of their own, so
@@ -254,7 +188,7 @@ participants$tech_conf_c <- grand_center(participants$tech_conf)
 # cannot be tested meaningfully at this n; the assumption is declared as a
 # limitation rather than treated as established.
 
-raw_by_id <- raw[match(participants$participant_id, as.character(raw$ResponseId)), , drop = FALSE]
+raw_by_id <- raw[match(participants$participant_id, as.character(raw$participant_id)), , drop = FALSE]
 
 blocks <- list()
 for (tool_key in names(TOOLS)) {
@@ -305,27 +239,6 @@ message("  participants: ", nrow(participants),
         " (adults ", sum(participants$respondent_type == "Adult"),
         ", parents ", sum(participants$respondent_type == "Parent"), ")")
 message("  long rows: ", nrow(long))
-
-# Completion time: not a filtering step (no one is included/excluded by it),
-# so appended after the funnel rather than added via add_step(). Median (IQR)
-# rather than mean (SD): Duration (in seconds) is wall-clock time from start
-# to submission, and a handful of respondents leave the survey open for hours
-# before returning to finish it, which would badly distort a mean.
-duration_min <- as.numeric(raw_by_id[["Duration (in seconds)"]]) / 60
-dur_str <- function(x) {
-  q <- stats::quantile(x, c(0.25, 0.5, 0.75), na.rm = TRUE)
-  sprintf("%s [%s, %s]", fmt_num(q[2], 1), fmt_num(q[1], 1), fmt_num(q[3], 1))
-}
-sample_flow <- rbind(
-  sample_flow,
-  data.frame(
-    step = "Median completion time (IQR), minutes",
-    n_total = dur_str(duration_min),
-    n_adult = dur_str(duration_min[participants$respondent_type == "Adult"]),
-    n_parent = dur_str(duration_min[participants$respondent_type == "Parent"]),
-    stringsAsFactors = FALSE
-  )
-)
 
 # Numbers are still computed and saved (00_sample_flow.csv) for reference;
 # no sample_flow.tex table is written.

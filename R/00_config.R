@@ -20,7 +20,7 @@ find_project_root <- function(start = getwd()) {
 }
 
 ROOT <- find_project_root()
-DATA_FILE <- file.path(ROOT, "data", "cleaned_scored_data.csv")
+DATA_FILE <- file.path(ROOT, "data", "ai_attitudes_adults_parents.csv")
 OUT_DIR <- file.path(ROOT, "outputs", "results")
 TEX_DIR <- file.path(OUT_DIR, "tables")
 FIG_DIR <- file.path(OUT_DIR, "figures")
@@ -155,72 +155,7 @@ CONFIDENCE_SCORES <- c(
 # third level is too small to interpret and isn't reported as a focal effect.
 GENDER_LEVELS <- c("Male", "Female", "Other or undisclosed")
 
-# Follows the broad groups of the Australian Standard Classification of
-# Cultural and Ethnic Groups, in that standard order; any unlisted response is
-# appended alphabetically.
-CULTURAL_GROUP_ORDER <- c(
-  "Oceanian",
-  "North-West European",
-  "Southern and Eastern European",
-  "North African and Middle Eastern",
-  "South-East Asian",
-  "North-East Asian",
-  "Southern and Central Asian",
-  "People of the Americas",
-  "Sub-Saharan African"
-)
-
-# Household income. The raw item states a weekly and an annual range together;
-# only the annual figure is kept. Named by the exact raw response text; the
-# vector order fixes the table's row order (ascending, "Prefer not to say"
-# last).
-INCOME_LABELS <- c(
-  "$0 - $599 per week ($0 - $31,199 per year)" = "$0 - $31,199",
-  "$600 - $999 per week ($31,200 - $51,999 per year)" = "$31,200 - $51,999",
-  "$1,000 - $1,599 per week ($52,000 - $83,199 per year)" = "$52,000 - $83,199",
-  "$1,600 - $2,399 per week ($83,200 - $124,799 per year)" = "$83,200 - $124,799",
-  "$2,400 - $3,199 per week ($124,800 - $166,399 per year)" = "$124,800 - $166,399",
-  "$3,200 - $3,999 per week ($166,400 - $207,999 per year)" = "$166,400 - $207,999",
-  "$4,000 - $5,199 per week ($208,000 - $268,399 per year)" = "$208,000 - $268,399",
-  "$5,200 - $6,399 per week ($268,400 - $332,799 per year)" = "$268,400 - $332,799",
-  "$6,400 - $7,999 per week ($332,800 - $415,999 per year)" = "$332,800 - $415,999",
-  "$8,000+ per week ($416,000+ per year)" = "$416,000+",
-  "Prefer not to say" = "Prefer not to say"
-)
-
 ADJUSTMENT_COVARIATES <- c("age_c", "gender_adj", "education_c")
-
-# ---- Child characteristics (parent/carer sample) ----------------------------
-
-# Eligibility was defined by two age bands, reported explicitly rather than
-# folded into a summary range. Bounds are half-open (min <= age < below) so
-# the bands tile the whole range with no gaps.
-CHILD_AGE_BANDS <- list(
-  list(label = "Under 4", min = -Inf, below = 4),
-  list(label = "4--12", min = 4, below = 13),
-  list(label = "13--17", min = 13, below = 18),
-  list(label = "18 or older", min = 18, below = Inf)
-)
-
-# A child outside the recruited age range makes the respondent ineligible, so
-# the parent/carer is excluded rather than having the value blanked.
-CHILD_ELIGIBLE_AGE_MIN <- 4
-CHILD_ELIGIBLE_AGE_MAX <- 17
-EXCLUDE_INELIGIBLE_CHILD_AGE <- TRUE
-
-# School grade has fifteen response options, collapsed to these groups for the
-# table.
-CHILD_GRADE_GROUPS <- c(
-  "Not in school", "Kindergarten/Prep", "Years 1--6", "Years 7--12",
-  "Prefer not to say"
-)
-
-# Categories sorted alphabetically but with these pushed to the end.
-CATEGORY_LAST <- c("Other (please specify)", "Other", "Prefer not to say")
-
-# Relationship to child: every non-biological arrangement is a single case, so
-# only the modal category is reported separately.
-CHILD_RELATION_KEEP <- "Biological parent"
 
 # ---- Derived: the scale definitions actually used for modelling --------------
 

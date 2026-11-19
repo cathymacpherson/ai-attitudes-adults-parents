@@ -85,60 +85,6 @@ mean_inter_item_r <- function(m) {
 
 grand_center <- function(x) x - mean(x, na.rm = TRUE)
 
-# ---- Categorical helpers ----------------------------------------------------
-
-# Observed categories in a stable order: alphabetical, with catch-all responses
-# pushed to the end. Ordering by frequency would be more readable but would
-# reshuffle the table whenever new responses arrive.
-ordered_levels <- function(x, last = CATEGORY_LAST) {
-  observed <- unique(stats::na.omit(trimws(as.character(x))))
-  observed <- observed[nzchar(observed)]
-  trailing <- intersect(last, observed)
-  c(sort(setdiff(observed, trailing)), trailing)
-}
-
-# Folds catch-all and non-response categories into a single labelled level, the
-# way gender is handled, so a table does not carry several one-person rows.
-collapse_other <- function(x, label = "Other or undisclosed", keep = NULL) {
-  values <- trimws(as.character(x))
-  values[!nzchar(values)] <- NA_character_
-  # Default: fold only the catch-all and non-response options. With `keep`:
-  # report those categories and fold everything else, for variables where the
-  # remaining categories are all single cases.
-  collapse <- if (is.null(keep)) {
-    values %in% CATEGORY_LAST
-  } else {
-    !values %in% keep
-  }
-  values[!is.na(values) & collapse] <- label
-  present <- unique(stats::na.omit(values))
-  factor(values, levels = c(sort(setdiff(present, label)),
-                            intersect(label, present)))
-}
-
-# Collapses the fifteen school-grade options into the groups used in the table.
-child_grade_group <- function(x) {
-  values <- trimws(as.character(x))
-  numeric_grade <- suppressWarnings(as.integer(values))
-  out <- rep(NA_character_, length(values))
-  out[!is.na(numeric_grade) & numeric_grade <= 6] <- "Years 1--6"
-  out[!is.na(numeric_grade) & numeric_grade >= 7] <- "Years 7--12"
-  out[grepl("^Not in school", values)] <- "Not in school"
-  out[grepl("^Kindergarten", values)] <- "Kindergarten/Prep"
-  out[grepl("^Prefer not", values)] <- "Prefer not to say"
-  factor(out, levels = CHILD_GRADE_GROUPS)
-}
-
-# Half-open bands (min <= x < below), so the levels tile the range without gaps
-# and a non-integer value cannot land between two bands.
-band_label <- function(x, bands) {
-  out <- rep(NA_character_, length(x))
-  for (band in bands) {
-    out[!is.na(x) & x >= band$min & x < band$below] <- band$label
-  }
-  factor(out, levels = vapply(bands, function(b) b$label, character(1)))
-}
-
 # Splits a tool-specific predictor into a between-person component (the
 # participant's mean across the two tools, grand-centred) and a within-person
 # component (deviation from their own mean).

@@ -15,8 +15,6 @@ OUTPUT_HTML = Path("outputs/results/tables_preview.html")
 # preview_all_tables.tex. Any .tex file in TABLES_DIR not listed here is
 # appended at the end (and flagged), so a new table can't silently go missing.
 TABLE_ORDER = [
-    "demographics.tex",
-    "child_demographics.tex",
     "reliability.tex",
     "subscale_descriptives.tex",
     "midpoint_comparison.tex",

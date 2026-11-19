@@ -37,9 +37,17 @@ session.
 
 ## Data
 
-Place a de-identified, scored CSV at `data/cleaned_scored_data.csv`. Expected
-columns are documented by the item-scoring logic in `R/01_load_prepare.R`
-and the questionnaire structure in `R/00_config.R`.
+Place a de-identified, scored CSV at `data/ai_attitudes_adults_parents.csv`, with its
+codebook at `data/codebook.csv`. Expected columns are documented by the
+item-scoring logic in `R/01_load_prepare.R` and the questionnaire structure in
+`R/00_config.R`.
+
+The dataset contains the analysed sample only (all participant exclusions are
+applied before release) and only the variables needed to reproduce the
+results. Variables used solely to describe the sample (household income,
+cultural background, characteristics of the child reported on, completion
+time) are not included, so the sample-characteristics tables are not
+produced here.
 
 ## Requirements
 
@@ -63,7 +71,7 @@ install.packages(c("lme4", "lmerTest", "emmeans", "simr", "ggplot2", "clubSandwi
 |---|---|
 | `01_load_prepare.R` | Analysis frames (`participants`, `long`) |
 | `02_reliability.R` | Internal consistency of the ATAMHS subscales |
-| `03_descriptives.R` | Demographics, subscale descriptives, correlations |
+| `03_descriptives.R` | Subscale descriptives, midpoint comparisons, correlations |
 | `04_model_a.R` | Perceptions of general-purpose vs. purpose-built AI |
 | `05_model_b.R` | Predictors of attitudes and intentions |
 | `06_model_c.R` | Demographic and familiarity predictors |
