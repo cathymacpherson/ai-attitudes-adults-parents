@@ -1,16 +1,15 @@
 # Supplementary analysis: does trust or perceived usefulness account for
-# environmental concern's and oversight preference's null association with
+# environmental concern's and oversight preference's association with
 # attitudes/intentions in the Model B full (Block 3) models?
 #
-# Both constructs correlate moderately with trust and perceived usefulness
-# (Tables 4-5 in the manuscript), so their null Block 3 coefficients could
-# reflect either a genuine absence of association or variance shared with
-# those two stronger predictors. This is tested directly: for each construct,
+# Both constructs may share variance with trust and perceived usefulness, so
+# their Block 3 coefficients could reflect either their own association or
+# overlap with those two predictors. This is tested directly: for each construct,
 # the same base model is fit three times -- the construct alone, the
 # construct plus trust, and the construct plus perceived usefulness -- and
 # the construct's own coefficient is compared across the three. If adding a
 # single other predictor drives the construct's coefficient to
-# non-significance, its Block 3 null is attributable to overlap with that
+# non-significance, its Block 3 result is attributable to overlap with that
 # predictor rather than to a genuine absence of association.
 #
 # Requires 05_model_b.R to have been sourced first, for BASE_TERMS,

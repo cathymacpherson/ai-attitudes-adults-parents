@@ -3,11 +3,10 @@
 #   outcome ~ ai_type + respondent_type + age_c + gender_adj + education_c
 #             + genai_freq_c + tech_conf_c + ai_mh_use + (1 | participant_id)
 #
-# Demographic and AI-familiarity predictors are focal here, not covariates. This
-# is reported before Model B because perceived usefulness correlates around .75
-# with the outcomes: entered alongside it, demographic predictors look inert for
-# reasons of measurement overlap rather than because background characteristics
-# do not matter.
+# Demographic and AI-familiarity predictors are focal here, not covariates.
+# They are modelled separately from the Model B perceptions so that their
+# associations with the outcomes are not judged only after variance shared
+# with those perceptions has been partialled out.
 #
 # All predictors vary between participants only, so no within/between
 # decomposition applies. A second step tests whether they predict differently

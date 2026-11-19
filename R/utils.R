@@ -47,13 +47,10 @@ score_items <- function(data, prefix, items, reverse = FALSE,
 
 # ---- Reliability ------------------------------------------------------------
 
-# Pairwise-complete rather than listwise deletion: some item sets (BACE in
-# particular) include a legitimate "Not applicable" response for items that
-# don't apply to every respondent (e.g. childcare, workplace concerns), so
-# requiring every item in a scale to be answered can throw away most of the
-# sample even though each item individually has plenty of data. Listwise and
-# pairwise deletion agree exactly for a 2-item scale, so this is a no-op for
-# Spearman-Brown subscales.
+# Pairwise-complete rather than listwise deletion, so a respondent missing one
+# item still contributes to the correlations among the items they did answer.
+# Listwise and pairwise deletion agree exactly for a 2-item scale, so this is a
+# no-op for Spearman-Brown subscales.
 cronbach_alpha <- function(m) {
   k <- ncol(m)
   if (k < 2L || sum(rowSums(!is.na(m)) > 0) < 3L) return(NA_real_)
@@ -153,7 +150,7 @@ r2_mixed <- function(fit) {
 }
 
 # Variance inflation factors for the fixed effects, from the model's own design
-# matrix. Reported because the between-person predictors are strongly
+# matrix. Reported because the between-person predictors can be
 # intercorrelated, and because ai_type is correlated with the within-person
 # components by construction.
 vif_fixed <- function(fit) {
@@ -230,8 +227,7 @@ fmt_r <- function(x, digits = 2, dash = "--") {
   sub("^(-?)0\\.", "\\1.", fmt_num(x, digits = digits, dash = dash))
 }
 
-# "M (SD)" cell, formatted with fmt_num -- identical in both papers' own
-# 03_descriptives.R, so shared here rather than duplicated.
+# "M (SD)" cell, formatted with fmt_num.
 mean_sd <- function(x, digits = 1) {
   sprintf("%s (%s)", fmt_num(mean(x, na.rm = TRUE), digits),
           fmt_num(stats::sd(x, na.rm = TRUE), digits))

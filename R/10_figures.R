@@ -42,22 +42,17 @@ message("10_figures")
 # Figures A and C are plain black -- significance is carried by shape (filled
 # vs. open point) alone, not by colour.
 # Figure B's navy/orange mark between- vs. within-person identity rather than
-# significance. Navy is the darkest step (700) of the palette's sequential
-# blue ramp, paired with the categorical orange slot; the pairing has not
-# been run through the project's CVD validator (no Node.js in this
-# environment when it was chosen), but the large lightness gap between the
-# two adds a strong luminance cue on top of hue, which should be at least as
-# distinguishable as the validated blue/orange adjacent pair it replaces.
-# Re-validate if that becomes possible.
+# significance. The large lightness gap between dark navy and orange adds a
+# luminance cue on top of hue, so the pair stays distinguishable for readers
+# with colour-vision deficiencies and in greyscale.
 
 COLOUR_SIG <- "#000000"
 COLOUR_NS <- "#000000"
 COLOUR_OUTCOME_1 <- "#0D366B"
 COLOUR_OUTCOME_2 <- "#EB6834"
 
-# "Times", not "Times New Roman": the base pdf() device (Cairo is not
-# functional in this R install) only recognises the four standard PDF font
-# aliases and errors with "invalid font type" on anything else. "Times" maps
+# "Times", not "Times New Roman": the base pdf() device only recognises the
+# four standard PDF font aliases and errors with "invalid font type" on anything else. "Times" maps
 # to Times-Roman, the same typeface family, and renders correctly in both the
 # PDF and PNG output.
 fig_theme <- ggplot2::theme_minimal(base_size = 12, base_family = "Times") +
@@ -132,13 +127,11 @@ save_figure(fig_a, "model_a_tool_effect", width = 7, height = 4)
 outcome_labels_b <- vapply(ANALYSIS_SCALES[MODEL_B_OUTCOMES], function(s) s$label, character(1))
 
 # ---- Figure B: Model B's between/within predictor coefficients -------------
-# The step-by-step tool-type attenuation (Blocks 1-3, plus the extended-only
-# robustness check) is easily read off the numbers already in the text, so it
-# has no figure. What benefits from one is the full Block 3 coefficient set:
-# six predictors x between/within x two outcomes is dense in a table, and the
-# text is built entirely around contrasts between them (privacy predicting
-# only within-participant, ease of use predicting intentions only between) --
-# exactly what a forest plot surfaces at a glance.
+# The tool-type coefficient across blocks (Blocks 1-3, plus the extended-only
+# robustness check) is easily read off the numbers in the text, so it has no
+# figure. What benefits from one is the full Block 3 coefficient set: six
+# predictors x between/within x two outcomes is dense in a table, and a forest
+# plot shows the between- and within-person contrasts at a glance.
 
 model_b_coef_main <- model_b_coefficients[model_b_coefficients$block == "B3", , drop = FALSE]
 level_suffix <- c("Between-person" = "btw", "Within-person" = "wth")

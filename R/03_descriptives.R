@@ -175,9 +175,7 @@ for (at in levels(long$ai_type)) {
   # from pairwise cor.test, since a table this size is otherwise unreadable
   # without some way to tell a trivial r from a meaningful one at a glance.
   # Benjamini-Hochberg across all pairs in the table: 28 simultaneous tests is
-  # the same kind of family already corrected for in Models A and C, and these
-  # values are now cited directly in the text rather than shown only for
-  # descriptive context.
+  # the same kind of family corrected for in Models A and C.
   n_vars <- length(CORRELATION_VARS)
   pair_i <- integer(0); pair_j <- integer(0); pair_r <- numeric(0); pair_p <- numeric(0)
   for (i in seq_len(n_vars)) {

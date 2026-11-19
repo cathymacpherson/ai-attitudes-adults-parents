@@ -20,7 +20,7 @@
 # ai_type is retained in every block. Its coefficient changes meaning as
 # predictors enter: in Block 1 it is the total purpose-built-versus-general difference,
 # and in Block 3 it is the difference remaining once perceptions are accounted
-# for. Both are reported, because the attenuation between them is the finding.
+# for. Both are reported, so any change between them can be read directly.
 
 # Runnable on its own: sets up the session if it is not already set up.
 if (!exists("SETUP_DONE")) {
@@ -63,10 +63,8 @@ MODEL_B_BLOCKS <- list(
 )
 
 # The interactions block is not part of the paper's block sequence and is
-# omitted: it was non-significant for both outcomes and added no explanatory
-# power, and the same reassurance is available from the similarity of the
-# perception effects across tool types. Adding it here would renumber the
-# displayed labels of any block that follows it.
+# omitted. Adding it here would renumber the displayed labels of any block
+# that follows it.
 MODEL_B_INCLUDED <- c("B1", "B2", "B3", "B4")
 
 block_definitions <- function(outcome) {
@@ -176,14 +174,14 @@ for (outcome in MODEL_B_OUTCOMES) {
     }
   }
 
-  # Robustness check on the attenuation. The block order gives the established
+  # Robustness check on the change in the tool-type effect. The block order gives the established
   # TAM constructs all variance they share with the extended ones, which makes
   # the extension's increment conservative but leaves open whether the
   # tool-type effect would disappear under any set of predictors. This refits
   # the base model with the extended constructs but WITHOUT perceived
-  # usefulness and ease of use: if the tool-type effect survives here and not
-  # in Block 2, the attenuation is specific to the core constructs rather than
-  # a general consequence of adding predictors.
+  # usefulness and ease of use, to show whether any change in the tool-type
+  # effect is specific to the core constructs rather than a general
+  # consequence of adding predictors.
   if (all(c("B2", "B3") %in% MODEL_B_INCLUDED)) {
     alt <- fit_lmer(model_formula(outcome, c(BASE_TERMS, EXTENDED)), dat)
     if (!is.null(alt$fit)) {
@@ -226,9 +224,8 @@ for (outcome in MODEL_B_OUTCOMES) {
     if (any(keep)) {
       attitude_path_rows[[length(attitude_path_rows) + 1L]] <- ct[keep, , drop = FALSE]
     }
-    # The full attitude-block model is kept as well: adding attitudes changes
-    # the other perception coefficients (perceived usefulness no longer
-    # predicts intentions once attitudes are in), so those need a table of
+    # The full attitude-block model is kept as well: adding attitudes can
+    # change the other perception coefficients, so those need a table of
     # their own rather than only the two attitude terms.
     if (extra_block == "B4") {
       attitude_block_rows[[length(attitude_block_rows) + 1L]] <- ct
@@ -332,7 +329,7 @@ row_from_cell <- function(label, values) {
 }
 
 # Builds the between/within table from one model's coefficients. The main
-# (Block 3) tables omit the tool-type coefficient because the attenuation
+# (Block 3) tables omit the tool-type coefficient because the tool-type-effect
 # table reports it; the attitude-block table has no such home for it, so it
 # is shown there, in the within-person block since tool type varies within
 # participants.
@@ -433,7 +430,7 @@ if (!is.null(model_b_attitude_block)) {
 
 # ---- Table: tool-type effect across blocks (total to direct) ----------------
 
-# The attenuation table shows the tool-type coefficient as perceptions enter, so
+# This table shows the tool-type coefficient as perceptions enter, so
 # it stops at the main model rather than continuing into any later block. The
 # final row is the robustness check that reverses which constructs are omitted.
 block_keys <- intersect(MODEL_B_INCLUDED, c("B1", "B2", "B3"))
@@ -475,8 +472,8 @@ write_apa_table(
   label = "tab:model-b-tool",
   align = "lrcrrr",
   header = c("Model", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
-  # What each row adjusts for is stated in its own label, and the attenuation
-  # is interpreted in the text, so only the unit needs stating here.
+  # What each row adjusts for is stated in its own label, and the change
+  # across rows is interpreted in the text, so only the unit needs stating here.
   note = "$b$ is the purpose-built-minus-general difference in scale points."
 )
 

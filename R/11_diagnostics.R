@@ -15,8 +15,8 @@
 # The "standard" p compared against is whatever the paper actually reports,
 # not a raw p nobody sees: Model A's is FDR-adjusted within its "Tool type
 # (overall)" family (04_model_a.R); Model C's is FDR-adjusted within each
-# outcome's eight predictors (06_model_c.R, added for the same reason Model A
-# already has it -- a family of simultaneous tests). Model B's single ai_type
+# outcome's eight predictors (06_model_c.R; likewise a family of simultaneous
+# tests). Model B's single ai_type
 # coefficient per outcome is not part of any such family and is left as the
 # raw p, matching model_b_tool_effect.tex. Whichever correction the standard
 # column carries, the robust column is put through the identical one, so a
@@ -195,7 +195,7 @@ for (outcome in MODEL_B_OUTCOMES) {
 # ---- Model C: every C1 main-effects coefficient, both outcomes -------------
 # Same logic as Model A: the standard column is model_c_coefficients$p_fdr
 # (06_model_c.R's own BH correction, within outcome across that outcome's
-# eight predictors -- the correction requested for this model specifically),
+# eight predictors),
 # and the robust column is put through the identical per-outcome correction so
 # the comparison isn't confounding "robust vs. not" with "corrected vs. not".
 

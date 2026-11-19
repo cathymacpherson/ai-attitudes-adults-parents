@@ -5,8 +5,7 @@
 # rated 1 (much less comfortable) to 5 (much more comfortable).
 #
 # One response per participant, so this is a between-person model with no random
-# effect. The item is ordinal with five categories and a clear floor of
-# responses, so it is modelled with proportional-odds ordinal logistic
+# effect. The item is ordinal with five categories, so it is modelled with proportional-odds ordinal logistic
 # regression (MASS::polr) rather than as a continuous outcome.
 #
 # This corroborates Model A using a different question format: Model A infers a

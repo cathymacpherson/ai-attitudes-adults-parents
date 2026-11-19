@@ -44,8 +44,8 @@ DOLLAR_PLACEHOLDER = "\x00DOLLAR\x00"
 
 
 def latex_to_html(text, labels):
-    # Escaped literal dollar signs (income brackets etc.) must be protected
-    # before the math-mode regex runs, or "\$0 - \$31,199" gets misread as
+    # Escaped literal dollar signs must be protected before the math-mode
+    # regex runs, or "\$0 - \$31,199" gets misread as
     # math content between two delimiters -- the backslash doesn't stop the
     # regex from matching on the bare "$" characters.
     text = text.replace("\\$", DOLLAR_PLACEHOLDER)

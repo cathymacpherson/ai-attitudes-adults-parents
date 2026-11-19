@@ -11,8 +11,8 @@
 # Random intercept only. With two observations per participant a random slope
 # for ai_type is not identifiable and would return a singular fit.
 #
-# gender_adj has only two levels here (Male/Female): the three respondents
-# with "Other or undisclosed" gender are excluded from this adjusted model via
+# gender_adj has only two levels here (Male/Female): respondents with
+# "Other or undisclosed" gender are excluded from this adjusted model via
 # complete-case selection, not merely down-weighted -- see BLANK_OTHER_GENDER
 # in 00_config.R. Estimated means and contrasts come from emmeans with
 # proportional weighting, so averaging over gender_adj reflects the Male/

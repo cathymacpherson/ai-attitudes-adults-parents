@@ -29,9 +29,9 @@ FIG_DIR <- file.path(OUT_DIR, "figures")
 
 # Community adults and parents/carers.
 
-# Two parent/carer respondents reported an implausible age (below 18),
-# apparently their child's age entered by mistake. They are retained and only
-# the age is set to missing, so they drop out of age-adjusted models via
+# A parent/carer age below 18 is implausible (most likely the child's age
+# entered by mistake). The respondent is retained and only the age is set to
+# missing, so they drop out of age-adjusted models via
 # complete-case selection but stay in descriptives.
 MIN_PLAUSIBLE_PARENT_AGE <- 18
 
@@ -39,8 +39,8 @@ MIN_PLAUSIBLE_PARENT_AGE <- 18
 # adult sample are plausible and retained; flagged here for reporting.
 FLAG_UNDER18_ADULTS <- TRUE
 
-# Respondents reporting "Other or undisclosed" gender (n = 3) are too few to
-# estimate a coefficient for. 01_load_prepare.R builds gender_adj, a copy of
+# Respondents reporting "Other or undisclosed" gender are too few to estimate
+# a coefficient for. 01_load_prepare.R builds gender_adj, a copy of
 # gender with this level set to missing, so descriptives and reliability keep
 # the full gender variable while ADJUSTMENT_COVARIATES (and so every adjusted
 # model) uses gender_adj instead.
@@ -103,8 +103,8 @@ TABLE_VAR_LABELS <- c(
 # Departures from the questionnaire as specified, applied only when scoring
 # the analysis frame; the reliability analysis uses SUBSCALES as administered.
 #
-# Privacy: the two-item composite is unreliable in every cell (Spearman-Brown
-# .48-.68). Item 13 ("I would worry about privacy...") is kept as the privacy
+# Privacy: the reliability of the two-item composite is assessed in
+# 02_reliability.R. Item 13 ("I would worry about privacy...") is kept as the privacy
 # score; item 14 ("I would want strong safeguards...") is reported separately
 # as a standalone descriptive item rather than combined with it.
 SCALE_OVERRIDES <- list(
