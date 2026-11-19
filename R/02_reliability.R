@@ -102,6 +102,9 @@ write_apa_table(
   label = "tab:reliability",
   align = "llccccc",
   header = spanned_header,
+  # \small matches the other manuscript tables and keeps the seven columns
+  # (with two "Purpose-built" headers) inside the portrait text width.
+  size = "\\small",
   note = paste0(
     "$\\alpha$ = Cronbach's alpha; $r_{SB}$ = Spearman-Brown coefficient, ",
     "reported for two-item subscales where $\\alpha$ is unstable. ",

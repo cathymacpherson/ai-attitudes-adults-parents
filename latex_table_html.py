@@ -18,6 +18,12 @@ def convert_math(inner):
     inner = inner.replace("\\Delta", "\u0394").replace("\\chi", "\u03c7")
     inner = inner.replace("\\alpha", "\u03b1").replace("\\times", "\u00d7")
     inner = inner.replace("\\beta", "\u03b2")
+    inner = inner.replace("\\leq", "\u2264").replace("\\geq", "\u2265")
+    inner = inner.replace("\\rightarrow", "\u2192")
+    # \sqrt{x} has no plain-text equivalent that stays readable; an overline
+    # on the radicand is what makes the extent of the root unambiguous.
+    inner = re.sub(r"\\sqrt\{([^}]*)\}",
+                   "\u221a" + r'<span class="radicand">\1</span>', inner)
     inner = re.sub(r"\^\{([^}]*)\}", r"<sup>\1</sup>", inner)
     inner = re.sub(r"\^(\S)", r"<sup>\1</sup>", inner)
     inner = re.sub(r"_\{([^}]*)\}", r"<sub>\1</sub>", inner)
@@ -135,10 +141,26 @@ def render_header(header_rows, labels):
 
 def render_body(body_rows, aligns, labels):
     rows_html = []
+    n_cols = len(aligns)
     for row in body_rows:
         cells = split_cells(row)
+        # A group-header row arrives as a single spanning cell (write_apa_table
+        # emits \multicolumn for these so the header text doesn't set the width
+        # of the first column). Render it as one colspan'd cell rather than
+        # letting the raw LaTeX fall through as text.
+        if len(cells) == 1:
+            match = MULTICOL_RE.match(cells[0])
+            if match:
+                span, spanner_label = match.groups()
+                span = min(int(span), n_cols) if n_cols else int(span)
+                rows_html.append(
+                    f'<tr class="category-row"><td colspan="{span}" '
+                    f'style="text-align:left">{latex_to_html(spanner_label, labels)}</td></tr>'
+                )
+                continue
         is_category_row = len(cells) > 1 and all(c == "" for c in cells[1:])
         row_class = ' class="category-row"' if is_category_row else ""
+
         tds = []
         for i, cell in enumerate(cells):
             align = aligns[i] if i < len(aligns) else "left"
@@ -197,6 +219,7 @@ PAGE_TEMPLATE = """<!doctype html>
   tbody tr:last-child td {{ border-bottom: 2px solid var(--fg); }}
   tr.category-row td:first-child {{ font-weight: 600; }}
   .indent {{ display: inline-block; width: 1.5em; }}
+  .radicand {{ border-top: 1px solid currentColor; padding: 0 0.15em; }}
   .note {{ color: var(--muted); font-size: 0.85rem; max-width: 70ch; white-space: normal; }}
   .note i {{ color: var(--fg); }}
   code {{ font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; }}
