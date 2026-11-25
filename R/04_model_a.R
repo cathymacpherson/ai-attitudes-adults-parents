@@ -2,21 +2,7 @@
 #
 #   outcome ~ ai_type * respondent_type + age_c + gender_adj + education_c
 #             + (1 | participant_id)
-#
-# Six outcomes: perceived usefulness, ease of use, trust, privacy concern,
-# human oversight preference, environmental concern. Attitudes and behavioural
-# intentions are NOT outcomes here -- they are the outcomes of Model B, where
-# these six enter as predictors.
-#
-# Random intercept only. With two observations per participant a random slope
-# for ai_type is not identifiable and would return a singular fit.
-#
-# gender_adj has only two levels here (Male/Female): respondents with
-# "Other or undisclosed" gender are excluded from this adjusted model via
-# complete-case selection, not merely down-weighted -- see BLANK_OTHER_GENDER
-# in 00_config.R. Estimated means and contrasts come from emmeans with
-# proportional weighting, so averaging over gender_adj reflects the Male/
-# Female sample composition rather than treating them as equally sized.
+
 
 # Runnable on its own: sets up the session if it is not already set up.
 if (!exists("SETUP_DONE")) {
@@ -114,12 +100,7 @@ for (outcome in MODEL_A_OUTCOMES) {
     )
 
     # --- Contrasts -----------------------------------------------------------
-    # emmeans notes that marginal means "may be misleading due to involvement
-    # in interactions". That is expected here and is the intended quantity: the
-    # overall tool-type effect is the marginal main effect averaged over
-    # respondent group, and the group-specific effects are reported alongside
-    # it so the interaction is never hidden. The note is muffled rather than
-    # left to print once per model.
+
     emm <- function(spec) {
       suppressMessages(emmeans::emmeans(fit, spec, weights = "proportional"))
     }
@@ -184,7 +165,7 @@ for (outcome in MODEL_A_OUTCOMES) {
       row.names = NULL, stringsAsFactors = FALSE
     )
 
-    # Estimated means for the figure and appendix table, by respondent group.
+    # Estimated means by respondent group.
     em <- as.data.frame(emm_tool_by_group)
     emmean_rows[[length(emmean_rows) + 1L]] <- data.frame(
       outcome = label, outcome_key = outcome, model = model_name,
@@ -195,8 +176,7 @@ for (outcome in MODEL_A_OUTCOMES) {
       row.names = NULL, stringsAsFactors = FALSE
     )
 
-    # Pooled over respondent group, recorded as respondent_type "Overall".
-    # These are the means quoted alongside the pooled contrast in the text: the
+    # Pooled over respondent group, recorded as respondent_type "Overall". The
     # difference between the two reproduces b exactly, which the group-specific
     # means do not.
     em_pooled <- as.data.frame(emm_tool)
@@ -212,7 +192,7 @@ for (outcome in MODEL_A_OUTCOMES) {
 
   # Descriptive within-person effect sizes. "Overall" is computed on the
   # combined difference scores, so it matches the granularity of the pooled
-  # model contrast reported alongside it; it is not the average of the two
+  # model contrast; it is not the average of the two
   # group values. The group-specific values accompany the group-specific
   # estimated means.
   dz_groups <- c(
@@ -260,9 +240,7 @@ write_result_csv(model_a_coefficients, "04_model_a_coefficients")
 write_result_csv(model_a_effects, "04_model_a_effects")
 write_result_csv(model_a_emmeans, "04_model_a_estimated_means")
 
-# ---- Main table (long format: one row-block per effect) --------------------
-# Row-blocks rather than column-blocks, so the table stays narrow enough to
-# fit a document page instead of running the three effects side by side.
+# ---- Table: tool-type and respondent-group effects --------------------------
 
 effect_cell <- function(effect, level, model = "Adjusted") {
   idx <- match(paste(subscale_labels_a, effect, level, model),
@@ -312,11 +290,6 @@ write_apa_table(
   align = "lrcrrrr",
   size = "\\small",
   header = c("Outcome", "$b$", "95\\% CI", "$t$", "$df$", "$p$", "$d_z$"),
-  # The model specification, degrees of freedom and multiplicity correction
-  # are described in the Data Analysis section. The note carries only what a
-  # reader cannot infer from the column headers or the text: the units, the
-  # weighting used when averaging over factors, and why $d_z$ is blank outside
-  # the tool-type block.
   note = paste0(
     "$b$ is in scale points (1--7). Estimates average over respondent group ",
     "and gender using proportional weights. $d_z$, the within-participant ",
@@ -325,7 +298,7 @@ write_apa_table(
   )
 )
 
-# ---- Estimated means table (long format: one row-block per respondent group)
+# ---- Table: estimated means -------------------------------------------------
 
 emm_cell <- function(rt, at) {
   idx <- match(paste(subscale_labels_a, rt, at, "Adjusted"),

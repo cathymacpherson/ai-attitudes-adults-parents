@@ -17,8 +17,8 @@ message("03_descriptives")
 
 # ---- Subscale descriptives --------------------------------------------------
 
-# Descriptives follow the scales AS ANALYSED, plus any items reported on their
-# own, so this table sits consistently alongside the model tables.
+# Descriptives follow the scales as analysed, plus any items reported on their
+# own.
 descriptive_specs <- c(
   lapply(ANALYSIS_SCALES, function(s) list(label = s$label)),
   lapply(STANDALONE_ITEMS, function(s) list(label = s$label))
@@ -88,7 +88,7 @@ write_apa_table(
 # intercept, so the two ratings per participant (general-purpose, purpose-built) are
 # not treated as independent. The intercept of the centred outcome is then
 # exactly the test of the mean against the midpoint, with the same
-# Satterthwaite df used throughout the rest of the paper.
+# Satterthwaite df used in the other models.
 
 SCALE_MIDPOINT <- 4
 
@@ -158,8 +158,7 @@ message("  midpoint comparison: ", paste(
 # ---- Correlations among the Model B variables -------------------------------
 
 CORRELATION_VARS <- TABLE_VAR_ORDER
-# Short labels shared with the reliability table (TABLE_VAR_LABELS in
-# 00_config.R), so both tables present the same eight variables the same way.
+
 correlation_labels <- unname(TABLE_VAR_LABELS[CORRELATION_VARS])
 
 for (at in levels(long$ai_type)) {
@@ -171,9 +170,6 @@ for (at in levels(long$ai_type)) {
     paste0("03_correlations_", suffix)
   )
 
-  # Lower triangle only, each pair shown once. Cells carry significance stars
-  # from pairwise cor.test, since a table this size is otherwise unreadable
-  # without some way to tell a trivial r from a meaningful one at a glance.
   # Benjamini-Hochberg across all pairs in the table: 28 simultaneous tests is
   # the same kind of family corrected for in Models A and C.
   n_vars <- length(CORRELATION_VARS)
@@ -210,12 +206,6 @@ for (at in levels(long$ai_type)) {
     align = paste0("l", strrep("r", n_vars - 1)),
     header = c("Variable", as.character(seq_len(n_vars - 1))),
     escape = TRUE,
-    # \small keeps 8 columns of short row labels (e.g. "Oversight
-    # preferences") inside the APA portrait text width, matching the other
-    # manuscript tables -- landscape isn't needed once the labels are short.
-    # tabcolsep trims the default 6pt gap either side of each of the 8
-    # columns down to 3pt, saving about 0.4in of width with no change to
-    # font size or content.
     size = "\\small",
     tabcolsep = "3pt",
     note = paste0(

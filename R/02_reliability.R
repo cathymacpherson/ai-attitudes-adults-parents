@@ -55,9 +55,7 @@ write_result_csv(reliability, "02_reliability")
 
 # ---- Table: reliability by tool type and respondent group -------------------
 
-# Rows follow TABLE_VAR_ORDER (00_config.R) rather than SUBSCALES' own order,
-# so this table lists the same eight variables in the same order as the
-# correlations_general/correlations_purpose_built tables.
+# Rows follow TABLE_VAR_ORDER (00_config.R).
 subscale_labels <- unname(vapply(SUBSCALES[TABLE_VAR_ORDER], function(s) s$label, character(1)))
 n_items <- unname(vapply(SUBSCALES[TABLE_VAR_ORDER], function(s) length(s$items), integer(1)))
 
@@ -69,10 +67,8 @@ lookup <- function(respondent, tool) {
   fmt_r(reliability$estimate[idx], 2)
 }
 
-# Short row labels shared with the correlation tables (TABLE_VAR_LABELS in
-# 00_config.R). `subscale_labels` above still carries the full SUBSCALES
-# labels used to look up `reliability`, so this substitution can't break
-# that match.
+# `subscale_labels` above still carries the full SUBSCALES labels used to look
+# up `reliability`, so substituting the short labels can't break that match.
 display_labels <- unname(TABLE_VAR_LABELS[TABLE_VAR_ORDER])
 
 tab <- data.frame(
@@ -86,8 +82,6 @@ tab <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Two-row header with spanned group columns, built in one string so the table
-# writer stays a dumb printer.
 spanned_header <- paste(
   "Subscale & Items & Coef. &",
   "\\multicolumn{2}{c}{Adults} & \\multicolumn{2}{c}{Parents/carers} \\\\",
@@ -102,8 +96,6 @@ write_apa_table(
   label = "tab:reliability",
   align = "llccccc",
   header = spanned_header,
-  # \small matches the other manuscript tables and keeps the seven columns
-  # (with two "Purpose-built" headers) inside the portrait text width.
   size = "\\small",
   note = paste0(
     "$\\alpha$ = Cronbach's alpha; $r_{SB}$ = Spearman-Brown coefficient, ",
@@ -114,8 +106,6 @@ write_apa_table(
 )
 
 # ---- Scale definitions: as specified versus as analysed ---------------------
-# Documents any departure from the administered questionnaire, so the reliability
-# evidence above and the scoring used in the models can be read together.
 
 definition_rows <- lapply(names(SUBSCALES), function(key) {
   specified <- SUBSCALES[[key]]$items

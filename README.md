@@ -32,7 +32,7 @@ session.
 ## Data
 
 Place the de-identified data at `data/ai_attitudes_adults_parents.csv`, with its
-codebook at `data/codebook.csv`. These can be downloaded from Mendeley data here: 
+codebook at `data/codebook.csv`. These can be downloaded from Mendeley data, DOI: 10.17632/9mnrpw3byf.1
 
 Expected columns are documented by the item-scoring logic in `R/01_load_prepare.R` and the questionnaire structure in `R/00_config.R`.
 

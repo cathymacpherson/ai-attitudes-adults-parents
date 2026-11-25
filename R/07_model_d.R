@@ -1,16 +1,4 @@
 # Model D: the direct purpose-built-versus-general comfort item.
-#
-# "Compared with general-purpose AI tools (such as ChatGPT), how comfortable
-# would you feel using AI tools specifically designed for mental health care?"
-# rated 1 (much less comfortable) to 5 (much more comfortable).
-#
-# One response per participant, so this is a between-person model with no random
-# effect. The item is ordinal with five categories, so it is modelled with proportional-odds ordinal logistic
-# regression (MASS::polr) rather than as a continuous outcome.
-#
-# This corroborates Model A using a different question format: Model A infers a
-# preference from separately rated blocks, whereas this asks for the comparison
-# directly.
 
 # Runnable on its own: sets up the session if it is not already set up.
 if (!exists("SETUP_DONE")) {
@@ -57,10 +45,6 @@ pct_cell <- function(rt) {
   sprintf("%d (%s\\%%)", rows$n[idx], fmt_num(rows$percent[idx], 1))
 }
 
-# "Less/More comfortable" collapse categories 1-2 and 4-5 respectively, which
-# are the summaries the result is usually stated as. Computed from the raw
-# counts (not by summing the already-rounded per-category percentages), so
-# they match the text exactly.
 collapsed <- function(rt, labels) {
   rows <- comfort_distribution[comfort_distribution$respondent_type == rt, , drop = FALSE]
   n <- sum(rows$n[rows$response %in% labels])
@@ -85,8 +69,6 @@ write_apa_table(
   label = "tab:comfort",
   align = "lrr",
   header = c("Response", "Adults", "Parents/carers"),
-  # The denominator rule and the referent both change how the percentages are
-  # read, and neither is visible from the column headers.
   note = paste0(
     "Cells are $n$ (\\%) of respondents answering the item; those who selected ",
     "\\emph{prefer not to say} are excluded. Parents and carers answered with ",
@@ -96,10 +78,6 @@ write_apa_table(
 
 # ---- Proportional-odds model ------------------------------------------------
 
-# The same adjustment set as Model A, so that the respondent-group contrast here
-# is like-for-like with the one reported there. This analysis exists to
-# corroborate that comparison using a different question format, which it can
-# only do if both are adjusted the same way.
 D_PREDICTORS <- c("respondent_type", ADJUSTMENT_COVARIATES)
 d_vars <- c("comfort_f", D_PREDICTORS)
 d_data <- comfort_data[stats::complete.cases(comfort_data[, d_vars]), , drop = FALSE]
@@ -156,9 +134,6 @@ write_apa_table(
   label = "tab:model-d",
   align = "lrcrr",
   header = c("Predictor", "$OR$", "95\\% CI", "$z$", "$p$"),
-  # The model and its covariates are described in the text. Retained here: the
-  # sample size, which differs from the other models; the direction of the odds
-  # ratio, without which the sign cannot be read; and the interval method.
   note = paste0(
     "$n = ", nrow(d_data), "$. An odds ratio above 1 indicates greater relative ",
     "comfort with purpose-built tools. Confidence intervals and $p$ values use the ",
@@ -167,9 +142,6 @@ write_apa_table(
 )
 
 # ---- Convergent validity against the Model A attitude difference ------------
-# If the direct comparison item measures what the separately rated blocks
-# measure, respondents who rate purpose-built tools more favourably should also report
-# greater comfort with them.
 
 att_wide <- long[, c("participant_id", "ai_type", "att")]
 gen <- att_wide[att_wide$ai_type == "General-purpose AI", c("participant_id", "att")]

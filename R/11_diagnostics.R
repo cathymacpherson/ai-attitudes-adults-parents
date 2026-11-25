@@ -1,27 +1,4 @@
 # Residual diagnostics and a heteroscedasticity sensitivity check.
-#
-# Every model here fits a bounded 1-7 subscale mean with a random intercept,
-# which is prone to two things at once: skewed residuals (ceiling effects
-# compress the upper end of the scale) and heteroscedasticity (residual
-# variance shrinks as the fitted value approaches the ceiling, since there is
-# less room left to vary). Neither breaks the point estimates, but
-# heteroscedasticity can bias the model-based standard errors, so every
-# headline coefficient is re-estimated with cluster-robust (CR2) SEs,
-# clustered on participant_id, and compared to the standard model-based
-# result. clubSandwich, not sandwich: sandwich does not support merMod
-# objects, and CR2 is the small-sample-appropriate cluster-robust estimator
-# for a design with few observations per cluster (two, here).
-#
-# The "standard" p compared against is whatever the paper actually reports,
-# not a raw p nobody sees: Model A's is FDR-adjusted within its "Tool type
-# (overall)" family (04_model_a.R); Model C's is FDR-adjusted within each
-# outcome's eight predictors (06_model_c.R; likewise a family of simultaneous
-# tests). Model B's single ai_type
-# coefficient per outcome is not part of any such family and is left as the
-# raw p, matching model_b_tool_effect.tex. Whichever correction the standard
-# column carries, the robust column is put through the identical one, so a
-# changed conclusion reflects the SE estimator and not a mismatched multiplicity
-# adjustment on one side only.
 
 # Runnable on its own: sets up the session if it is not already set up.
 if (!exists("SETUP_DONE")) {
@@ -58,9 +35,6 @@ kurtosis_excess <- function(x) {
 }
 
 # ---- Refit helpers ------------------------------------------------------
-# Each model script reports coefficient/contrast tables but does not keep the
-# fitted merMod object itself, so the headline specification is refit here,
-# identically to how each model script builds it.
 
 refit_model_a <- function(outcome) {
   vars <- c(outcome, "ai_type", "respondent_type", "participant_id", ADJUSTMENT_COVARIATES)
@@ -110,18 +84,6 @@ residual_rows <- list()
 robust_rows <- list()
 
 # ---- Model A: the "Tool type (overall)" contrast, all six outcomes ---------
-# Robust SE requires overriding emmeans' covariance matrix; Kenward-Roger
-# cannot be used with a user-supplied covariance, so this falls back to
-# Satterthwaite for both the standard and robust contrast, which keeps them
-# comparable.
-#
-# The standard column uses model_a_effects$p_fdr -- the value 04_model_a.R
-# actually reports -- not the raw contrast p, so this is a comparison against
-# what the paper says rather than against an uncorrected number nobody sees.
-# The robust column is put through the identical BH correction (same family:
-# the "Tool type (overall)" effect, across the six outcomes), so both sides of
-# the comparison carry the same multiplicity adjustment and differ only in
-# whether the SE is model-based or cluster-robust.
 
 model_a_rows <- list()
 for (outcome in MODEL_A_OUTCOMES) {
@@ -193,11 +155,6 @@ for (outcome in MODEL_B_OUTCOMES) {
 }
 
 # ---- Model C: every C1 main-effects coefficient, both outcomes -------------
-# Same logic as Model A: the standard column is model_c_coefficients$p_fdr
-# (06_model_c.R's own BH correction, within outcome across that outcome's
-# eight predictors),
-# and the robust column is put through the identical per-outcome correction so
-# the comparison isn't confounding "robust vs. not" with "corrected vs. not".
 
 model_c_rows <- list()
 for (outcome in MODEL_B_OUTCOMES) {
@@ -252,9 +209,6 @@ robust_se_comparison$conclusion_changes <-
 
 write_result_csv(residual_diagnostics, "11_residual_diagnostics")
 write_result_csv(robust_se_comparison, "11_robust_se_comparison")
-
-# Numbers are still computed and saved (11_robust_se_comparison.csv) for
-# reference; no robust_se_comparison.tex table is written.
 
 write_apa_table(
   data.frame(

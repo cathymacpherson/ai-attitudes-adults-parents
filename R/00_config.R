@@ -80,12 +80,8 @@ MODEL_A_OUTCOMES <- c("pu", "peou", "trust", "privacy", "oversight", "environ")
 MODEL_B_OUTCOMES <- c("att", "intent")
 MODEL_B_PREDICTORS <- MODEL_A_OUTCOMES
 
-# ---- Shared display order/labels for the manuscript tables -----------------
+# ---- Display order and short labels ----------------------------------------
 
-# reliability.tex and the two correlations_*.tex tables present the same eight
-# subscales side by side, sharing one order and one set of short labels for
-# table headers/row labels. Model tables and figures use the fuller
-# SUBSCALES/ANALYSIS_SCALES labels instead.
 TABLE_VAR_ORDER <- c(MODEL_B_PREDICTORS, MODEL_B_OUTCOMES)
 TABLE_VAR_LABELS <- c(
   pu        = "Perceived usefulness",
@@ -166,8 +162,5 @@ for (key in names(SCALE_OVERRIDES)) {
 
 # ---- Inference --------------------------------------------------------------
 
-# Model A tests six outcomes; p values are adjusted with Benjamini-Hochberg
-# within each effect family (tool type, respondent type, interaction) rather
-# than across all three families at once.
 P_ADJUST_METHOD <- "BH"
 ALPHA <- 0.05

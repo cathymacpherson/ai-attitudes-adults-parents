@@ -2,15 +2,7 @@
 #
 #   outcome ~ ai_type + respondent_type + age_c + gender_adj + education_c
 #             + genai_freq_c + tech_conf_c + ai_mh_use + (1 | participant_id)
-#
-# Demographic and AI-familiarity predictors are focal here, not covariates.
-# They are modelled separately from the Model B perceptions so that their
-# associations with the outcomes are not judged only after variance shared
-# with those perceptions has been partialled out.
-#
-# All predictors vary between participants only, so no within/between
-# decomposition applies. A second step tests whether they predict differently
-# for the two tool types.
+
 
 # Runnable on its own: sets up the session if it is not already set up.
 if (!exists("SETUP_DONE")) {
@@ -91,11 +83,7 @@ model_c_steps <- do.call(rbind, c_step_rows)
 model_c_coefficients <- do.call(rbind, c_coef_rows)
 
 # ---- Multiplicity -----------------------------------------------------------
-# Benjamini-Hochberg within each outcome, across that outcome's C1 main-effect
-# predictors (standard practice for a family of simultaneous tests, matching
-# the correction already applied in Model A). The C2 interaction terms are a
-# different family -- tested by the omnibus likelihood-ratio test reported in
-# model_c_interaction_test.tex -- and are not part of this correction.
+
 model_c_coefficients$p_fdr <- NA_real_
 c1_mask <- model_c_coefficients$step == "C1" & model_c_coefficients$term != "(Intercept)"
 for (oc in unique(model_c_coefficients$outcome[c1_mask])) {
@@ -107,9 +95,7 @@ for (oc in unique(model_c_coefficients$outcome[c1_mask])) {
 write_result_csv(model_c_steps, "06_model_c_steps")
 write_result_csv(model_c_coefficients, "06_model_c_coefficients")
 
-# ---- Table: main-effects coefficients (long format: one row-block per outcome)
-# One row-block per outcome rather than the two side by side, so the table
-# stays narrow enough to fit a document page.
+# ---- Table: main-effects coefficients ---------------------------------------
 
 C_TERM_LABELS <- c(
   "ai_typePurpose-built AI" = "Purpose-built AI (vs general-purpose)",
@@ -170,8 +156,6 @@ write_apa_table(
   align = "lrcrrr",
   size = "\\small",
   header = c("Predictor", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
-  # Model specification is in the Data Analysis section. Retained here: the
-  # unit and the symbol definition.
   note = paste0(
     "$b$ is in scale points (1--7). $p$ values are Benjamini-Hochberg adjusted ",
     "within each outcome, across that outcome's eight predictors. $R^2_m$ is ",
@@ -196,8 +180,6 @@ write_apa_table(
   label = "tab:model-c-interactions",
   align = "lrrr",
   header = c("Outcome", "$\\chi^2$", "$df$", "$p$"),
-  # The columns do not say what is being compared, so that stays. What a
-  # non-significant test means is interpretation and belongs in the text.
   note = paste0(
     "Each test compares a model with all predictor $\\times$ tool type ",
     "interactions against the corresponding main-effects model."

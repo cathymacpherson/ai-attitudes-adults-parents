@@ -20,9 +20,9 @@ if (!exists("SETUP_DONE")) {
 
 message("08_preview")
 
-# Tables are previewed in the order they appear in the manuscript; anything
-# not listed here is appended afterwards in alphabetical order, so nothing
-# silently goes missing from the preview.
+# Tables listed here are previewed first, in this order; anything not listed
+# is appended afterwards in alphabetical order, so nothing silently goes
+# missing from the preview.
 MANUSCRIPT_TABLE_ORDER <- c(
   "reliability.tex",
   "model_a_adjusted.tex", "model_a_estimated_means.tex",

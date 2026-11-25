@@ -16,11 +16,6 @@
 # Blocks are fitted with ML for the likelihood-ratio tests (a REML likelihood is
 # not comparable across different fixed-effect structures) and refitted with
 # REML for coefficient inference.
-#
-# ai_type is retained in every block. Its coefficient changes meaning as
-# predictors enter: in Block 1 it is the total purpose-built-versus-general difference,
-# and in Block 3 it is the difference remaining once perceptions are accounted
-# for. Both are reported, so any change between them can be read directly.
 
 # Runnable on its own: sets up the session if it is not already set up.
 if (!exists("SETUP_DONE")) {
@@ -47,8 +42,7 @@ EXTENDED <- as.vector(rbind(
 TOOL_INTERACTIONS <- c("ai_type:pu_wth", "ai_type:trust_wth")
 ATTITUDE_TERMS <- c("att_btw", "att_wth")
 
-# Each block adds its terms to those of the blocks before it. Keys B1--B4 match
-# the Block numbering in the paper. Models are assembled from the blocks listed
+# Each block adds its terms to those of the blocks before it. Models are assembled from the blocks listed
 # in MODEL_B_INCLUDED, so a block can be dropped without leaving its terms
 # behind in later blocks; displayed labels are numbered by position.
 MODEL_B_BLOCKS <- list(
@@ -62,8 +56,7 @@ MODEL_B_BLOCKS <- list(
             outcomes = "intent")
 )
 
-# The interactions block is not part of the paper's block sequence and is
-# omitted. Adding it here would renumber the displayed labels of any block
+# The interactions block is not included. Adding it here would renumber the displayed labels of any block
 # that follows it.
 MODEL_B_INCLUDED <- c("B1", "B2", "B3", "B4")
 
@@ -87,8 +80,8 @@ block_definitions <- function(outcome) {
   blocks
 }
 
-# The block reported as the main-effects model: the full predictor set, without
-# interactions and without attitude, so one table answers one question.
+# The main-effects model: the full predictor set, without interactions and
+# without attitude.
 MAIN_BLOCK <- "B3"
 
 model_formula <- function(outcome, terms) {
@@ -225,8 +218,8 @@ for (outcome in MODEL_B_OUTCOMES) {
       attitude_path_rows[[length(attitude_path_rows) + 1L]] <- ct[keep, , drop = FALSE]
     }
     # The full attitude-block model is kept as well: adding attitudes can
-    # change the other perception coefficients, so those need a table of
-    # their own rather than only the two attitude terms.
+    # change the other perception coefficients, not only the two attitude
+    # terms.
     if (extra_block == "B4") {
       attitude_block_rows[[length(attitude_block_rows) + 1L]] <- ct
     }
@@ -250,11 +243,6 @@ if (!is.null(model_b_attitude_block)) {
 }
 
 # ---- Table: hierarchical blocks ---------------------------------------------
-# Both outcomes in one table, as a row-block each rather than two separate
-# tables: the blocks being compared are the same sequence, so reading the
-# increments across outcomes matters more than keeping them apart. Intentions
-# carry one block the attitudes model does not (attitudes enter as a
-# predictor), so the two row-blocks are deliberately uneven.
 
 block_table_rows <- function(outcome, group_label) {
   rows <- model_b_blocks[model_b_blocks$outcome_key == outcome, , drop = FALSE]
@@ -286,10 +274,6 @@ write_apa_table(
   align = "lrrrrrr",
   header = c("Block", "$R^2_m$", "$\\Delta R^2_m$", "$\\chi^2$", "$df$",
              "$p$", "AIC"),
-  # Estimation and the block structure are described in the Data Analysis
-  # section; retained here are the two symbol definitions and the fact that
-  # the blocks share a sample, without which the increments are not
-  # comparable.
   note = paste0(
     "$R^2_m$ is the marginal (fixed-effects) $R^2$; $\\Delta R^2_m$ is the ",
     "increment over the preceding block. All blocks are fitted on identical ",
@@ -298,11 +282,6 @@ write_apa_table(
 )
 
 # ---- Table: main-effects coefficients, between and within -------------------
-# Long format: a between-person row-block followed by a within-person
-# row-block, rather than the two side by side, so the table stays narrow
-# enough to fit a document page. Demographic covariates have no within-person
-# component (they vary between participants only), so they are omitted from
-# the within-person block entirely rather than shown as a placeholder.
 
 PREDICTOR_LABELS <- c(
   pu = "Perceived usefulness", peou = "Perceived ease of use",
@@ -328,11 +307,6 @@ row_from_cell <- function(label, values) {
   )
 }
 
-# Builds the between/within table from one model's coefficients. The main
-# (Block 3) tables omit the tool-type coefficient because the tool-type-effect
-# table reports it; the attitude-block table has no such home for it, so it
-# is shown there, in the within-person block since tool type varies within
-# participants.
 coefficient_tab <- function(ct, labels, show_tool_type = FALSE) {
   btw_rows <- list()
   wth_rows <- list()
@@ -389,11 +363,7 @@ for (outcome in MODEL_B_OUTCOMES) {
     align = "lrcrrr",
     size = "\\small",
     header = c("Predictor", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
-    # The decomposition itself is explained in the Data Analysis section. What
-    # remains here is the unit, why demographic covariates are absent from the
-    # within-person block, and that the tool-type coefficient is reported
-    # elsewhere, since its absence from this table would otherwise look like
-    # an omission.
+
     note = paste0(
       "$b$ is in scale points (1--7). Demographic covariates and respondent ",
       "group vary between participants only, so are omitted from the ",
@@ -403,8 +373,6 @@ for (outcome in MODEL_B_OUTCOMES) {
 }
 
 # ---- Table: intentions model with attitudes added (Block 4) -----------------
-# Same layout as the main intentions table, with attitudes as a further
-# decomposed predictor.
 
 if (!is.null(model_b_attitude_block)) {
   write_apa_table(
@@ -430,13 +398,9 @@ if (!is.null(model_b_attitude_block)) {
 
 # ---- Table: tool-type effect across blocks (total to direct) ----------------
 
-# This table shows the tool-type coefficient as perceptions enter, so
-# it stops at the main model rather than continuing into any later block. The
-# final row is the robustness check that reverses which constructs are omitted.
 block_keys <- intersect(MODEL_B_INCLUDED, c("B1", "B2", "B3"))
 if (all(c("B2", "B3") %in% MODEL_B_INCLUDED)) block_keys <- c(block_keys, "Alt")
-# The outcome is a group-header row rather than its own column, matching
-# model_c_coefficients and the block table above.
+
 TOOL_EFFECT_OUTCOME_LABELS <- c(att = "Attitudes",
                                 intent = "Behavioural intentions")
 TOOL_EFFECT_BLOCK_LABELS <- c(
@@ -472,8 +436,6 @@ write_apa_table(
   label = "tab:model-b-tool",
   align = "lrcrrr",
   header = c("Model", "$b$", "95\\% CI", "$t$", "$df$", "$p$"),
-  # What each row adjusts for is stated in its own label, and the change
-  # across rows is interpreted in the text, so only the unit needs stating here.
   note = "$b$ is the purpose-built-minus-general difference in scale points."
 )
 

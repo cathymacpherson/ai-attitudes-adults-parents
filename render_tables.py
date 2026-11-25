@@ -11,8 +11,7 @@ from latex_table_html import render_tables
 TABLES_DIR = Path("outputs/results/tables")
 OUTPUT_HTML = Path("outputs/results/tables_preview.html")
 
-# Presentation order, matching the paper rather than the alphabetical order in
-# preview_all_tables.tex. Any .tex file in TABLES_DIR not listed here is
+# Presentation order. Any .tex file in TABLES_DIR not listed here is
 # appended at the end (and flagged), so a new table can't silently go missing.
 TABLE_ORDER = [
     "reliability.tex",

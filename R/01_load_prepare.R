@@ -182,11 +182,6 @@ participants$tech_conf_c <- grand_center(participants$tech_conf)
 # Adult and parent scores live in different columns (attn_gen_s_* vs
 # attn_gen_p_*) and are coalesced into a single score column here, with
 # respondent_type carrying the distinction.
-#
-# This pools the self- and parent-worded versions of the same 18 items, which
-# assumes comparable measurement across report target. Measurement invariance
-# cannot be tested meaningfully at this n; the assumption is declared as a
-# limitation rather than treated as established.
 
 raw_by_id <- raw[match(participants$participant_id, as.character(raw$participant_id)), , drop = FALSE]
 
@@ -240,7 +235,5 @@ message("  participants: ", nrow(participants),
         ", parents ", sum(participants$respondent_type == "Parent"), ")")
 message("  long rows: ", nrow(long))
 
-# Numbers are still computed and saved (00_sample_flow.csv) for reference;
-# no sample_flow.tex table is written.
 write_result_csv(sample_flow, "00_sample_flow")
 write_result_csv(long, "01_analysis_long")

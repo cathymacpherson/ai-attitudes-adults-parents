@@ -1,16 +1,3 @@
-# One figure per model, showing its main finding as a dot-and-whisker plot
-# (estimate + 95% CI) -- the natural form for every quantity here, since each
-# model's headline result already IS an estimate with an interval.
-#
-# Model D has no figure: its comfort-distribution result reads better as the
-# table already in the manuscript than as a plot.
-#
-# Significance in Figures A and C is encoded by shape alone (filled vs. open
-# point), both plain black, so it survives greyscale print. Figure B instead
-# uses colour (navy vs. orange) for identity -- between- vs. within-person --
-# since there significance is not what is being distinguished; shape there
-# marks significance as in A and C.
-
 # Runnable on its own: sets up the session if it is not already set up.
 if (!exists("SETUP_DONE")) {
   .p <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
@@ -51,10 +38,6 @@ COLOUR_NS <- "#000000"
 COLOUR_OUTCOME_1 <- "#0D366B"
 COLOUR_OUTCOME_2 <- "#EB6834"
 
-# "Times", not "Times New Roman": the base pdf() device only recognises the
-# four standard PDF font aliases and errors with "invalid font type" on anything else. "Times" maps
-# to Times-Roman, the same typeface family, and renders correctly in both the
-# PDF and PNG output.
 fig_theme <- ggplot2::theme_minimal(base_size = 12, base_family = "Times") +
   ggplot2::theme(
     legend.position = "bottom",
@@ -81,16 +64,13 @@ save_figure <- function(plot, name, width, height) {
 }
 
 # ---- Figure A: Model A's tool-type effect across the six ATAMHS subscales ---
-# The adjusted "purpose-built - general" contrast, overall (averaged over respondent
-# group), is the quantity model_a_adjusted.tex reports as its headline column.
 
 model_a_main <- model_a_effects[
   model_a_effects$model == "Adjusted" &
     model_a_effects$effect == "Tool type (overall)",
   , drop = FALSE
 ]
-# "Trust" rather than "Trust in AI" on this axis only -- the table
-# (model_a_adjusted.tex etc.) keeps the fuller subscale name.
+# Shortened to "Trust" on this axis.
 fig_a_outcome_labels <- sub("^Trust in AI$", "Trust", subscale_labels_a)
 model_a_main$outcome <- sub("^Trust in AI$", "Trust", model_a_main$outcome)
 model_a_main$outcome <- factor(model_a_main$outcome, levels = rev(fig_a_outcome_labels))
@@ -127,11 +107,6 @@ save_figure(fig_a, "model_a_tool_effect", width = 7, height = 4)
 outcome_labels_b <- vapply(ANALYSIS_SCALES[MODEL_B_OUTCOMES], function(s) s$label, character(1))
 
 # ---- Figure B: Model B's between/within predictor coefficients -------------
-# The tool-type coefficient across blocks (Blocks 1-3, plus the extended-only
-# robustness check) is easily read off the numbers in the text, so it has no
-# figure. What benefits from one is the full Block 3 coefficient set: six
-# predictors x between/within x two outcomes is dense in a table, and a forest
-# plot shows the between- and within-person contrasts at a glance.
 
 model_b_coef_main <- model_b_coefficients[model_b_coefficients$block == "B3", , drop = FALSE]
 level_suffix <- c("Between-person" = "btw", "Within-person" = "wth")
@@ -141,8 +116,6 @@ for (key in names(PREDICTOR_LABELS)) {
     term <- paste0(key, "_", level_suffix[[level_label]])
     ct <- model_b_coef_main[model_b_coef_main$term == term, , drop = FALSE]
     if (!nrow(ct)) next
-    # "Trust" rather than "Trust in AI" on this axis only -- the table
-    # (model_b_coefficients_*.tex) keeps the fuller predictor name.
     model_b_predictor_rows[[length(model_b_predictor_rows) + 1L]] <- data.frame(
       outcome = vapply(ct$outcome_key, function(k) ANALYSIS_SCALES[[k]]$label, character(1)),
       predictor = sub("^Trust in AI$", "Trust", PREDICTOR_LABELS[[key]]), level = level_label,
@@ -186,9 +159,6 @@ fig_b <- ggplot2::ggplot(
 save_figure(fig_b, "model_b_predictors", width = 9, height = 5)
 
 # ---- Figure C: Model C's demographic/familiarity predictors -----------------
-# "Who holds positive attitudes and intentions" is the main-effects (C1)
-# coefficient set already reported in model_c_coefficients.tex, faceted here
-# by outcome instead of laid out in table columns.
 
 model_c_main <- model_c_coefficients[
   model_c_coefficients$step == "C1" & model_c_coefficients$term != "(Intercept)",
@@ -199,8 +169,7 @@ model_c_main$predictor <- ifelse(
   C_TERM_LABELS[model_c_main$term],
   model_c_main$term
 )
-# "(centred)" is precise for the manuscript table (model_c_coefficients.tex)
-# but redundant clutter on a plot axis, so it is dropped here only.
+# "(centred)" is dropped from the plot axis labels.
 model_c_main$predictor <- sub(" \\(centred\\)", "", model_c_main$predictor)
 predictor_order <- sub(
   " \\(centred\\)", "",
