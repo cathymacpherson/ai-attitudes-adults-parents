@@ -1,14 +1,10 @@
 # Attitudes toward generative AI in mental health care
 
-Mixed-effects analyses of attitudes and behavioural intentions toward
-general-purpose versus purpose-built generative AI tools for mental health, among
-Australian adults and parents/carers.
+This repository provides the code to run mixed-effects analyses of attitudes and behavioural intentions toward general-purpose versus purpose-built generative AI tools for mental health, among Australian adults and parents/carers. It is designed to support the publication: *"Predicting Attitudes Toward the Use of Generative AI in Mental Health Care Among Australian Adults and Parents/Carers"*.
 
-This repository contains the analysis code only. It expects a de-identified,
-scored dataset supplied separately (see [Data](#data) below) and produces
-tidy result CSVs and Overleaf-ready LaTeX table fragments.
+This repository contains the analysis code only. It expects a de-identified, scored dataset supplied separately (see [Data](#data) below).
 
-## Run
+## Run the analyses in full
 
 ```bash
 Rscript run_analysis.R
@@ -23,9 +19,7 @@ RUN_POWER=0 Rscript run_analysis.R
 
 ### Running one step at a time
 
-Each step script sets up the session itself if it has not been set up
-already, so any of them can be run on its own from anywhere inside the
-repository:
+Each step script sets up the session itself if it has not been set up already, so any of them can be run on its own from anywhere inside the repository:
 
 ```r
 source("R/04_model_a.R")
@@ -37,17 +31,17 @@ session.
 
 ## Data
 
-Place a de-identified, scored CSV at `data/ai_attitudes_adults_parents.csv`, with its
-codebook at `data/codebook.csv`. Expected columns are documented by the
-item-scoring logic in `R/01_load_prepare.R` and the questionnaire structure in
-`R/00_config.R`.
+Place the de-identified data at `data/ai_attitudes_adults_parents.csv`, with its
+codebook at `data/codebook.csv`. These can be downloaded from Mendeley data here: 
+
+Expected columns are documented by the item-scoring logic in `R/01_load_prepare.R` and the questionnaire structure in `R/00_config.R`.
 
 The dataset contains the analysed sample only (all participant exclusions are
 applied before release) and only the variables needed to reproduce the
 results. Variables used solely to describe the sample (household income,
 cultural background, characteristics of the child reported on, completion
-time) are not included, so the sample-characteristics tables are not
-produced here.
+time) are not included, so the demographics tables presented in the publication are not
+produced here. This decision was made to preserve data anonymity. 
 
 ## Requirements
 
