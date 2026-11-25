@@ -2,7 +2,7 @@
 
 This repository provides the code to run mixed-effects analyses of attitudes and behavioural intentions toward general-purpose versus purpose-built generative AI tools for mental health, among Australian adults and parents/carers. It is designed to support the publication: *"Predicting Attitudes Toward the Use of Generative AI in Mental Health Care Among Australian Adults and Parents/Carers"*.
 
-This repository contains the analysis code only. It expects a de-identified, scored dataset supplied separately (see [Data](#data) below).
+This repository contains the analysis code and its outputs (`outputs/results/`). The de-identified dataset is published separately (see [Data](#data) below).
 
 ## Run the analyses in full
 
@@ -79,8 +79,12 @@ install.packages(c("lme4", "lmerTest", "emmeans", "simr", "ggplot2", "clubSandwi
 ## Outputs
 
 Written to `outputs/results/`: tidy CSVs at the top level, LaTeX table
-fragments in `tables/`, figures in `figures/`, and `preview_all_tables.tex`
-for a one-shot compile check of every table.
+fragments in `tables/`, figures in `figures/`, `preview_all_tables.tex`
+for a one-shot compile check of every table, and `session_info.txt` recording
+the R and package versions used. The outputs from the published run are
+included in the repository, except `01_analysis_long.csv` (the
+participant-level analysis frame), which is regenerated when the pipeline is
+run.
 
 ## Optional: HTML table preview
 

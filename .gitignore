@@ -1,6 +1,8 @@
-# Participant data and generated results are not tracked.
+# Participant data are not tracked (available on Mendeley Data; see README).
+# The participant-level analysis frame written to outputs/ is excluded for the
+# same reason; all other outputs are tracked.
 data/
-outputs/
+outputs/results/01_analysis_long.csv
 
 # Python bytecode and caches
 __pycache__/

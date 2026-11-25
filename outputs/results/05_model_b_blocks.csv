@@ -1,0 +1,8 @@
+"outcome","outcome_key","block","block_label","n_terms","r2_marginal","r2_conditional","delta_r2_marginal","aic","lrt_chisq","lrt_df","lrt_p","singular","messages"
+"Attitudes towards AI","att","B1","1. Tool type, group, demographics",5,0.0360075357287974,0.867460750582822,,1005.80342638035,,,,FALSE,""
+"Attitudes towards AI","att","B2","2. + core TAM",9,0.817922561282766,0.894037045343175,0.781915025553969,635.665235142263,378.138191238084,4,1.46976053724271e-80,FALSE,""
+"Attitudes towards AI","att","B3","3. + trust, privacy, oversight, environment",17,0.851203143159358,0.907283970169628,0.0332805818765921,582.116281449055,69.5489536932076,8,6.04283839470353e-12,FALSE,""
+"Behavioural intentions to use AI","intent","B1","1. Tool type, group, demographics",5,0.0343982535833303,0.887442641476764,,1048.02311063392,,,,FALSE,""
+"Behavioural intentions to use AI","intent","B2","2. + core TAM",9,0.688690748981264,0.892021450132471,0.654292495397933,825.539941746772,230.483168887146,4,1.03890852837634e-48,FALSE,""
+"Behavioural intentions to use AI","intent","B3","3. + trust, privacy, oversight, environment",17,0.748333288334199,0.903587758501552,0.0596425393529358,775.31406385511,66.225877891662,8,2.76044749494193e-11,FALSE,""
+"Behavioural intentions to use AI","intent","B4","4. + attitudes towards AI",19,0.776795342061443,0.906765475479612,0.0284620537272434,747.275191069915,32.0388727851955,2,1.10369016228438e-07,FALSE,""

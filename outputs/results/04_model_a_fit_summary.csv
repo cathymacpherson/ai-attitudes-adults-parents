@@ -1,0 +1,7 @@
+"outcome","outcome_key","model","formula","n_observations","n_participants","n_adults","n_parents","singular","random_intercept_var","residual_var","messages"
+"Perceived usefulness","pu","Adjusted","pu ~ ai_type * respondent_type + age_c + gender_adj + education_c + (1 | participant_id)",350,175,91,84,FALSE,1.53574606167793,0.221990614117006,""
+"Perceived ease of use","peou","Adjusted","peou ~ ai_type * respondent_type + age_c + gender_adj + education_c + (1 | participant_id)",350,175,91,84,FALSE,1.40709793027993,0.24506063426535,""
+"Trust in AI","trust","Adjusted","trust ~ ai_type * respondent_type + age_c + gender_adj + education_c + (1 | participant_id)",349,175,91,84,FALSE,1.93923870743909,0.39477567588933,""
+"Privacy concerns","privacy","Adjusted","privacy ~ ai_type * respondent_type + age_c + gender_adj + education_c + (1 | participant_id)",349,175,91,84,FALSE,2.08086162216371,0.58249516740571,""
+"Human oversight preferences","oversight","Adjusted","oversight ~ ai_type * respondent_type + age_c + gender_adj + education_c + (1 | participant_id)",345,175,91,84,FALSE,0.680951947517019,0.152787270253054,""
+"Environmental concerns","environ","Adjusted","environ ~ ai_type * respondent_type + age_c + gender_adj + education_c + (1 | participant_id)",346,174,91,83,FALSE,2.34815841034791,0.18388687153017,""

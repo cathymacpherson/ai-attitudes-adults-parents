@@ -1,0 +1,3 @@
+"step","n_total","n_adult","n_parent"
+"Cleaned and scored dataset",186,95,91
+"Implausible parent/carer age set to missing (n = 1, retained)",186,95,91

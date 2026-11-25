@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-11-25T14:18:13+1100",
+  "r_version": "4.6.1",
+  "steps": ["01_load_prepare", "02_reliability", "03_descriptives", "04_model_a", "05_model_b", "06_model_c", "07_model_d", "09_power", "10_figures", "11_diagnostics", "12_supp_redundancy"],
+  "sample": {
+    "reverse_concern_scales": false,
+    "n_participants": 186,
+    "n_adults": 95,
+    "n_parents": 91
+  },
+  "csv_files": ["00_sample_flow.csv", "01_analysis_long.csv", "02_reliability.csv", "02_scale_definitions.csv", "03_correlations_general.csv", "03_correlations_purpose_built.csv", "03_midpoint_comparison.csv", "03_subscale_descriptives.csv", "04_model_a_coefficients.csv", "04_model_a_effects.csv", "04_model_a_estimated_means.csv", "04_model_a_fit_summary.csv", "05_model_b_blocks.csv", "05_model_b_coefficients_attitude_block.csv", "05_model_b_coefficients.csv", "05_model_b_interaction_and_attitude_terms.csv", "05_model_b_tool_effect_by_block.csv", "05_model_b_vif.csv", "06_model_c_coefficients.csv", "06_model_c_steps.csv", "07_comfort_distribution.csv", "07_model_d_coefficients.csv", "07_model_d_convergent_validity.csv", "09_power_at_target_n.csv", "09_power_curves.csv", "09_power_results.csv", "11_residual_diagnostics.csv", "11_robust_se_comparison.csv", "12_supp_redundancy.csv"],
+  "tex_files": ["comfort_distribution.tex", "correlations_general.tex", "correlations_purpose_built.tex", "midpoint_comparison.tex", "model_a_adjusted.tex", "model_a_estimated_means.tex", "model_b_blocks.tex", "model_b_coefficients_att.tex", "model_b_coefficients_intent_block4.tex", "model_b_coefficients_intent.tex", "model_b_tool_effect.tex", "model_c_coefficients.tex", "model_c_interaction_test.tex", "model_d_comfort.tex", "reliability.tex", "residual_diagnostics.tex", "subscale_descriptives.tex", "supp_redundancy.tex"],
+  "fig_files": ["model_a_tool_effect.pdf", "model_a_tool_effect.png", "model_b_predictors.pdf", "model_b_predictors.png", "model_c_predictors.pdf", "model_c_predictors.png"]
+}

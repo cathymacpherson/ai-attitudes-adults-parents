@@ -1,0 +1,37 @@
+"subscale","subscale_key","respondent_type","ai_type","n","mean","sd"
+"Perceived usefulness","pu","Adult","General-purpose AI",95,4.76052631578947,1.47312619414447
+"Perceived usefulness","pu","Adult","Purpose-built AI",95,5.20263157894737,1.42978142246059
+"Perceived usefulness","pu","Parent","General-purpose AI",91,5.07692307692308,1.12588996137642
+"Perceived usefulness","pu","Parent","Purpose-built AI",91,5.40567765567766,1.18316435877603
+"Perceived ease of use","peou","Adult","General-purpose AI",95,5.43684210526316,1.42216890336473
+"Perceived ease of use","peou","Adult","Purpose-built AI",95,5.45263157894737,1.46787167573973
+"Perceived ease of use","peou","Parent","General-purpose AI",91,5.5,1.12546286774228
+"Perceived ease of use","peou","Parent","Purpose-built AI",91,5.5,1.13773654439173
+"Attitudes towards AI","att","Adult","General-purpose AI",95,4.5421052631579,1.61716714141423
+"Attitudes towards AI","att","Adult","Purpose-built AI",95,4.92105263157895,1.5883816691802
+"Attitudes towards AI","att","Parent","General-purpose AI",91,5.07692307692308,1.25149483268582
+"Attitudes towards AI","att","Parent","Purpose-built AI",91,5.21978021978022,1.34207300515283
+"Behavioural intentions to use AI","intent","Adult","General-purpose AI",95,4.47894736842105,1.83192113650996
+"Behavioural intentions to use AI","intent","Adult","Purpose-built AI",95,4.7,1.79745683225767
+"Behavioural intentions to use AI","intent","Parent","General-purpose AI",90,5.01666666666667,1.38298244726323
+"Behavioural intentions to use AI","intent","Parent","Purpose-built AI",91,5.21978021978022,1.35648399918644
+"Trust in AI","trust","Adult","General-purpose AI",95,4.35263157894737,1.69930161532414
+"Trust in AI","trust","Adult","Purpose-built AI",95,4.60526315789474,1.61590291083507
+"Trust in AI","trust","Parent","General-purpose AI",91,4.74725274725275,1.35886722917294
+"Trust in AI","trust","Parent","Purpose-built AI",90,4.93333333333333,1.38450494133617
+"Privacy concerns","privacy","Adult","General-purpose AI",95,5.25263157894737,1.83331127612372
+"Privacy concerns","privacy","Adult","Purpose-built AI",95,5.35789473684211,1.82719287941614
+"Privacy concerns","privacy","Parent","General-purpose AI",91,5.67032967032967,1.30856108467741
+"Privacy concerns","privacy","Parent","Purpose-built AI",90,5.91111111111111,1.31238221039729
+"Human oversight preferences","oversight","Adult","General-purpose AI",95,6.23157894736842,0.99415987817949
+"Human oversight preferences","oversight","Adult","Purpose-built AI",95,6.3421052631579,0.968281977939171
+"Human oversight preferences","oversight","Parent","General-purpose AI",88,6.40909090909091,0.859515549682663
+"Human oversight preferences","oversight","Parent","Purpose-built AI",89,6.5561797752809,0.766627065934067
+"Environmental concerns","environ","Adult","General-purpose AI",95,4.77368421052632,1.57569373619367
+"Environmental concerns","environ","Adult","Purpose-built AI",95,4.85789473684211,1.6432698945239
+"Environmental concerns","environ","Parent","General-purpose AI",88,4.90340909090909,1.48335197175192
+"Environmental concerns","environ","Parent","Purpose-built AI",89,4.99438202247191,1.58202686094897
+"Preference for data safeguards (item 14)","safeguards","Adult","General-purpose AI",95,6.27368421052632,1.09585393947503
+"Preference for data safeguards (item 14)","safeguards","Adult","Purpose-built AI",94,6.28723404255319,1.05364028900455
+"Preference for data safeguards (item 14)","safeguards","Parent","General-purpose AI",89,6.46067415730337,0.917706872581685
+"Preference for data safeguards (item 14)","safeguards","Parent","Purpose-built AI",89,6.59550561797753,0.702578063013051

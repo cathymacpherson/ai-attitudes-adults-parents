@@ -1,0 +1,33 @@
+"subscale","subscale_key","ai_type","respondent_type","n_items","n","coefficient","estimate","inter_item_r"
+"Perceived usefulness","pu","General-purpose AI","Adult",4,94,"Cronbach's alpha",0.895373931008344,0.699434698800719
+"Perceived ease of use","peou","General-purpose AI","Adult",2,95,"Spearman-Brown",0.841744024551797,0.726734022870957
+"Attitudes towards AI","att","General-purpose AI","Adult",2,95,"Spearman-Brown",0.872389513183991,0.773662114164373
+"Behavioural intentions to use AI","intent","General-purpose AI","Adult",2,95,"Spearman-Brown",0.941754385964912,0.889920424403183
+"Trust in AI","trust","General-purpose AI","Adult",2,95,"Spearman-Brown",0.930205866224555,0.869518570775608
+"Privacy concern","privacy","General-purpose AI","Adult",2,95,"Spearman-Brown",0.531958863545114,0.362359643974092
+"Human oversight preferences","oversight","General-purpose AI","Adult",2,92,"Spearman-Brown",0.668508411282078,0.502074828670737
+"Environmental concerns","environ","General-purpose AI","Adult",2,93,"Spearman-Brown",0.826536533776806,0.704356426567777
+"Perceived usefulness","pu","General-purpose AI","Parent",4,89,"Cronbach's alpha",0.890403056658569,0.679166955449872
+"Perceived ease of use","peou","General-purpose AI","Parent",2,89,"Spearman-Brown",0.842121790344093,0.727297381815615
+"Attitudes towards AI","att","General-purpose AI","Parent",2,90,"Spearman-Brown",0.859696792466283,0.753919472282869
+"Behavioural intentions to use AI","intent","General-purpose AI","Parent",2,89,"Spearman-Brown",0.947567337409085,0.900359111884964
+"Trust in AI","trust","General-purpose AI","Parent",2,90,"Spearman-Brown",0.918640482151199,0.849523647767667
+"Privacy concern","privacy","General-purpose AI","Parent",2,89,"Spearman-Brown",0.682768955800815,0.518336520238867
+"Human oversight preferences","oversight","General-purpose AI","Parent",2,85,"Spearman-Brown",0.672780530956519,0.506909781425515
+"Environmental concerns","environ","General-purpose AI","Parent",2,88,"Spearman-Brown",0.841012157725201,0.725643640984627
+"Perceived usefulness","pu","Purpose-built AI","Adult",4,95,"Cronbach's alpha",0.928931889922831,0.770970004978086
+"Perceived ease of use","peou","Purpose-built AI","Adult",2,95,"Spearman-Brown",0.844013433658889,0.730123911673414
+"Attitudes towards AI","att","Purpose-built AI","Adult",2,95,"Spearman-Brown",0.909260635429184,0.833618612258448
+"Behavioural intentions to use AI","intent","Purpose-built AI","Adult",2,95,"Spearman-Brown",0.924494151845293,0.859590074225527
+"Trust in AI","trust","Purpose-built AI","Adult",2,95,"Spearman-Brown",0.894161893557604,0.808582999942209
+"Privacy concern","privacy","Purpose-built AI","Adult",2,94,"Spearman-Brown",0.482117004616714,0.317624616708334
+"Human oversight preferences","oversight","Purpose-built AI","Adult",2,94,"Spearman-Brown",0.806941166285573,0.676363263472322
+"Environmental concerns","environ","Purpose-built AI","Adult",2,95,"Spearman-Brown",0.879867731055658,0.785503422631402
+"Perceived usefulness","pu","Purpose-built AI","Parent",4,90,"Cronbach's alpha",0.941119012183026,0.80213622797333
+"Perceived ease of use","peou","Purpose-built AI","Parent",2,90,"Spearman-Brown",0.815559237685837,0.688560596388456
+"Attitudes towards AI","att","Purpose-built AI","Parent",2,90,"Spearman-Brown",0.917801121238028,0.848089144472212
+"Behavioural intentions to use AI","intent","Purpose-built AI","Parent",2,90,"Spearman-Brown",0.959552371626279,0.922249563994023
+"Trust in AI","trust","Purpose-built AI","Parent",2,89,"Spearman-Brown",0.929170737922153,0.867711381102139
+"Privacy concern","privacy","Purpose-built AI","Parent",2,89,"Spearman-Brown",0.569509870559942,0.398122195210719
+"Human oversight preferences","oversight","Purpose-built AI","Parent",2,87,"Spearman-Brown",0.827300222569555,0.705466342274141
+"Environmental concerns","environ","Purpose-built AI","Parent",2,89,"Spearman-Brown",0.902341564165144,0.822060428551111

@@ -59,6 +59,11 @@ for (step in STEPS) {
   message("")
 }
 
+# Exact R and package versions used for this run.
+session_info_path <- file.path(OUT_DIR, "session_info.txt")
+writeLines(utils::capture.output(utils::sessionInfo()), session_info_path)
+record_output(session_info_path)
+
 # Stale outputs are cleared before the preview is built, so the wrapper never
 # ends up with an \input{} pointing at a file that is about to be deleted.
 if (skip_power) {

@@ -1,0 +1,5 @@
+"outcome","outcome_key","step","step_label","r2_marginal","r2_conditional","aic","lrt_chisq","lrt_df","lrt_p","singular","messages"
+"Attitudes towards AI","att","C1","1. Main effects",0.228649085591282,0.872628554548978,986.740295170716,,,,FALSE,""
+"Attitudes towards AI","att","C2","2. + predictor $\times$ tool type",0.231364609002624,0.875004935352682,989.697425979382,9.04286919133324,6,0.171181453858015,FALSE,""
+"Behavioural intentions to use AI","intent","C1","1. Main effects",0.241136137320687,0.887108226114029,1029.48905369956,,,,FALSE,""
+"Behavioural intentions to use AI","intent","C2","2. + predictor $\times$ tool type",0.243710063966388,0.889620128306151,1031.76834129242,9.72071240713842,6,0.136916899770958,FALSE,""

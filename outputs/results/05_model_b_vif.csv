@@ -1,0 +1,35 @@
+"outcome","outcome_key","block","term","vif"
+"Attitudes towards AI","att","B3","ai_typePurpose-built AI",1.43575227390442
+"Attitudes towards AI","att","B3","respondent_typeParent",1.21481277719664
+"Attitudes towards AI","att","B3","age_c",1.15885986208451
+"Attitudes towards AI","att","B3","gender_adjFemale",1.03070496945073
+"Attitudes towards AI","att","B3","education_c",1.14617790132825
+"Attitudes towards AI","att","B3","pu_btw",4.0609547460631
+"Attitudes towards AI","att","B3","pu_wth",1.48232407182618
+"Attitudes towards AI","att","B3","peou_btw",2.23390796424842
+"Attitudes towards AI","att","B3","peou_wth",1.05054892831243
+"Attitudes towards AI","att","B3","trust_btw",4.26448447950932
+"Attitudes towards AI","att","B3","trust_wth",1.2284779215554
+"Attitudes towards AI","att","B3","privacy_btw",1.52433153299674
+"Attitudes towards AI","att","B3","privacy_wth",1.04152841794721
+"Attitudes towards AI","att","B3","oversight_btw",1.20970700256994
+"Attitudes towards AI","att","B3","oversight_wth",1.06452556464341
+"Attitudes towards AI","att","B3","environ_btw",1.55839892659533
+"Attitudes towards AI","att","B3","environ_wth",1.03233042162228
+"Behavioural intentions to use AI","intent","B3","ai_typePurpose-built AI",1.43575227390442
+"Behavioural intentions to use AI","intent","B3","respondent_typeParent",1.21481277719664
+"Behavioural intentions to use AI","intent","B3","age_c",1.15885986208451
+"Behavioural intentions to use AI","intent","B3","gender_adjFemale",1.03070496945073
+"Behavioural intentions to use AI","intent","B3","education_c",1.14617790132825
+"Behavioural intentions to use AI","intent","B3","pu_btw",4.0609547460631
+"Behavioural intentions to use AI","intent","B3","pu_wth",1.48232407182618
+"Behavioural intentions to use AI","intent","B3","peou_btw",2.23390796424842
+"Behavioural intentions to use AI","intent","B3","peou_wth",1.05054892831243
+"Behavioural intentions to use AI","intent","B3","trust_btw",4.26448447950932
+"Behavioural intentions to use AI","intent","B3","trust_wth",1.2284779215554
+"Behavioural intentions to use AI","intent","B3","privacy_btw",1.52433153299674
+"Behavioural intentions to use AI","intent","B3","privacy_wth",1.04152841794721
+"Behavioural intentions to use AI","intent","B3","oversight_btw",1.20970700256994
+"Behavioural intentions to use AI","intent","B3","oversight_wth",1.06452556464341
+"Behavioural intentions to use AI","intent","B3","environ_btw",1.55839892659533
+"Behavioural intentions to use AI","intent","B3","environ_wth",1.03233042162228
